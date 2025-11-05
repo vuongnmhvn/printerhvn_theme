@@ -33,8 +33,8 @@ get_header();
 
 			<!-- Page Header (Optional) -->
 			<?php if ( $paged == 1 ) : ?>
-				<div class="page-header text-center" style="padding: 3rem 0 2rem;">
-					<h1 class="page-title"><?php bloginfo( 'name' ); ?></h1>
+				<div class="page-header text-center">
+					<!-- <h1 class="page-title"><?php bloginfo( 'name' ); ?></h1> -->
 					<?php
 					$description = get_bloginfo( 'description', 'display' );
 					if ( $description ) :
@@ -80,7 +80,7 @@ get_header();
 			<?php if ( $asset_query->max_num_pages > 1 ) : ?>
 				<div class="load-more-wrapper text-center mt-4">
 					<button class="btn btn-primary" id="load-more-assets">
-						<?php _e( 'Load More', 'pinterhvn-theme' ); ?>
+						<?php _e( 'Tải thêm', 'pinterhvn-theme' ); ?>
 					</button>
 					<div class="spinner" style="display: none;"></div>
 				</div>

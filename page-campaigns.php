@@ -15,8 +15,8 @@ get_header();
 
 		<!-- Page Header -->
 		<div class="campaigns-header">
-			<h1 class="page-title"><?php _e( 'Campaigns', 'pinterhvn-theme' ); ?></h1>
-			<p class="page-subtitle"><?php _e( 'Explore curated collections of assets organized by marketing campaigns', 'pinterhvn-theme' ); ?></p>
+			<h1 class="page-title"><?php _e( 'Chiến dịch', 'pinterhvn-theme' ); ?></h1>
+			<p class="page-subtitle"><?php _e( 'Khám phá các bộ sưu tập tài sản được quản lý theo các chiến dịch tiếp thị', 'pinterhvn-theme' ); ?></p>
 		</div>
 
 		<!-- Campaigns Grid -->
@@ -35,7 +35,8 @@ get_header();
 				foreach ( $campaigns as $campaign ) :
 					$campaign_id = $campaign->term_id;
 					$description = get_term_meta( $campaign_id, 'campaign_description', true );
-					$thumbnail = get_term_meta( $campaign_id, 'campaign_thumbnail', true );
+					$thumbnail_id = get_term_meta( $campaign_id, 'campaign_thumbnail_id', true );
+					$thumbnail_url = $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, 'large' ) : '';
 					$start_date = get_term_meta( $campaign_id, 'campaign_start_date', true );
 					$end_date = get_term_meta( $campaign_id, 'campaign_end_date', true );
 					$status = get_term_meta( $campaign_id, 'campaign_status', true );
@@ -70,8 +71,8 @@ get_header();
 							
 							<!-- Campaign Preview -->
 							<div class="campaign-preview">
-								<?php if ( $thumbnail ) : ?>
-									<img src="<?php echo esc_url( $thumbnail ); ?>" alt="<?php echo esc_attr( $campaign->name ); ?>" class="campaign-cover">
+								<?php if ( $thumbnail_url ) : ?>
+									<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php echo esc_attr( $campaign->name ); ?>" class="campaign-cover">
 								<?php elseif ( ! empty( $preview_assets ) ) : ?>
 									<div class="campaign-assets-preview">
 										<?php foreach ( array_slice( $preview_assets, 0, 4 ) as $index => $asset ) : ?>
@@ -114,7 +115,7 @@ get_header();
 											<path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
 											<path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
 										</svg>
-										<?php echo number_format_i18n( $campaign->count ); ?> assets
+										<?php echo number_format_i18n( $campaign->count ); ?> tài nguyên
 									</span>
 
 									<?php if ( $start_date || $end_date ) : ?>
@@ -126,9 +127,9 @@ get_header();
 											if ( $start_date && $end_date ) {
 												echo date_i18n( 'M d', strtotime( $start_date ) ) . ' - ' . date_i18n( 'M d, Y', strtotime( $end_date ) );
 											} elseif ( $start_date ) {
-												echo __( 'From', 'pinterhvn-theme' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $start_date ) );
+												echo __( 'Từ', 'pinterhvn-theme' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $start_date ) );
 											} elseif ( $end_date ) {
-												echo __( 'Until', 'pinterhvn-theme' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $end_date ) );
+												echo __( 'đến', 'pinterhvn-theme' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $end_date ) );
 											}
 											?>
 										</span>
@@ -187,7 +188,7 @@ get_header();
 /* Campaigns Grid */
 .campaigns-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 24px;
 	padding: 0 20px;
 }

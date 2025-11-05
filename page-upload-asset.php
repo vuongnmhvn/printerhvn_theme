@@ -26,13 +26,7 @@ get_header();
 
 		<!-- Header -->
 		<div class="upload-header">
-			<button class="btn-close-upload" onclick="window.location.href='<?php echo esc_url( home_url( '/' ) ); ?>'">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-					<line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-					<line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-				</svg>
-			</button>
-			<h1 class="upload-title"><?php _e( 'Create Pin', 'pinterhvn-theme' ); ?></h1>
+			<h1 class="upload-title"><?php _e( 'Đăng tài nguyên mới', 'pinterhvn-theme' ); ?></h1>
 			<div class="header-spacer"></div>
 		</div>
 
@@ -44,18 +38,23 @@ get_header();
 				
 				<!-- Left Column - Media Upload -->
 				<div class="upload-media-section">
+					<!-- File input is moved outside the drop zone to prevent event bubbling loops -->
+					<input 
+						type="file" 
+						id="asset_thumbnail" 
+						name="asset_thumbnail" 
+						accept="image/*,video/mp4,.gif"
+						style="display: none;"
+					>
 					
 					<!-- File Drop Zone -->
-					<div class="file-drop-zone" id="file-drop-zone">
-						<input 
-							type="file" 
-							id="asset_thumbnail" 
-							name="asset_thumbnail" 
-							accept="image/*,video/mp4,.gif"
-							style="display: none;"
-						>
-						
-						<div class="drop-zone-content" id="drop-zone-content">
+					<label for="asset_thumbnail" class="file-drop-zone" id="file-drop-zone">
+						<!-- 
+							We use a label to trigger the file input. 
+							The input itself is hidden and placed outside this label 
+							to avoid event bubbling issues.
+						-->
+						<div class="drop-zone-content" id="drop-zone-content" style="pointer-events: none;">
 							<div class="upload-icon">
 								<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 									<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -82,7 +81,7 @@ get_header();
 								<?php _e( 'Change', 'pinterhvn-theme' ); ?>
 							</button>
 						</div>
-					</div>
+					</label>
 
 					<!-- Save from URL -->
 					<div class="url-upload-section">
@@ -226,7 +225,7 @@ get_header();
 <style>
 /* Upload Page Styles */
 .upload-page {
-	padding: 0;
+	padding: 120px 0px 120px 0px;
 	min-height: 100vh;
 	background: #f8f9fa;
 }
@@ -238,15 +237,8 @@ get_header();
 
 /* Header */
 .upload-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
 	padding: 16px 24px;
-	background: #ffffff;
-	border-bottom: 1px solid #e2e8f0;
-	position: sticky;
-	top: 64px;
-	z-index: 100;
+	text-align: center;
 }
 
 .btn-close-upload {
@@ -676,20 +668,6 @@ jQuery(document).ready(function($) {
 	var selectedFile = null;
 	var selectedTags = [];
 
-	// Choose file button - FIX: Use proper event handler
-	$('#choose-file-btn').on('click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		$('#asset_thumbnail').trigger('click');
-	});
-
-	// Change file button
-	$('#change-file-btn').on('click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		$('#asset_thumbnail').trigger('click');
-	});
-
 	// File input change
 	$('#asset_thumbnail').on('change', function(e) {
 		var file = e.target.files[0];
@@ -718,27 +696,26 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		$(this).removeClass('drag-over');
 
-		var files = e.originalEvent.dataTransfer.files;
-		if (files.length > 0) {
-			// Set files to input element
-			var input = document.getElementById('asset_thumbnail');
-			var dataTransfer = new DataTransfer();
-			dataTransfer.items.add(files[0]);
-			input.files = dataTransfer.files;
-			
-			// Trigger change event
-			$('#asset_thumbnail').trigger('change');
-		}
+		var files = e.originalEvent.dataTransfer ? e.originalEvent.dataTransfer.files : [];
+        if (files.length > 0) {
+            // Set files to input element
+            var input = document.getElementById('asset_thumbnail');
+            if (input) {
+                input.files = files;
+                // Trigger change event manually as it's not always fired programmatically
+                var event = new Event('change', { bubbles: true });
+                input.dispatchEvent(event);
+            }
+        }
 	});
 
-	// Click on drop zone (but not on preview)
-	dropZone.on('click', function(e) {
-		// Only trigger if clicking on drop zone itself, not preview area
-		if (!$(e.target).closest('.preview-area, .btn-choose-file').length) {
-			e.preventDefault();
-			$('#asset_thumbnail').trigger('click');
-		}
+	// When clicking the preview area, prevent the label from triggering the file input.
+	// The "Change" button inside will handle its own click.
+	$('#preview-area').on('click', function(e) {
+		e.preventDefault();
 	});
+
+	$('#change-file-btn').on('click', function() { $('#asset_thumbnail').trigger('click'); });
 
 	// Handle file select
 	function handleFileSelect(file) {

@@ -87,10 +87,14 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 					data-url="<?php the_permalink(); ?>"
 					title="<?php esc_attr_e( 'Share', 'pinterhvn-theme' ); ?>"
 				>
-					<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-						<path d="M15 8a3 3 0 11-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+						<circle cx="18" cy="5" r="3" stroke-width="2"></circle>
+						<circle cx="6" cy="12" r="3" stroke-width="2"></circle>
+						<circle cx="18" cy="19" r="3" stroke-width="2"></circle>
+						<line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke-width="2"></line>
+						<line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke-width="2"></line>
 					</svg>
-					<?php _e( 'Share', 'pinterhvn-theme' ); ?>
+					<?php _e( '', 'pinterhvn-theme' ); ?>
 				</button>
 
 				<?php if ( $asset_link ) : ?>
@@ -103,7 +107,7 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 						<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
 							<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
 						</svg>
-						<?php _e( 'Download', 'pinterhvn-theme' ); ?>
+						<?php _e( '', 'pinterhvn-theme' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>
@@ -129,39 +133,6 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 				</span>
 			</div>
 		</div>
-
-		<!-- Asset Stats -->
-		<?php if ( $view_count || $save_count || $download_count ) : ?>
-			<div class="asset-card-stats">
-				<?php if ( $view_count ) : ?>
-					<div class="asset-card-stat" title="<?php esc_attr_e( 'Views', 'pinterhvn-theme' ); ?>">
-						<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-							<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-							<path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-						</svg>
-						<span><?php echo number_format_i18n( $view_count ); ?></span>
-					</div>
-				<?php endif; ?>
-
-				<?php if ( $save_count ) : ?>
-					<div class="asset-card-stat" title="<?php esc_attr_e( 'Saves', 'pinterhvn-theme' ); ?>">
-						<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-							<path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
-						</svg>
-						<span><?php echo number_format_i18n( $save_count ); ?></span>
-					</div>
-				<?php endif; ?>
-
-				<?php if ( $download_count ) : ?>
-					<div class="asset-card-stat" title="<?php esc_attr_e( 'Downloads', 'pinterhvn-theme' ); ?>">
-						<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-						</svg>
-						<span><?php echo number_format_i18n( $download_count ); ?></span>
-					</div>
-				<?php endif; ?>
-			</div>
-		<?php endif; ?>
 
 		<!-- Categories (optional) -->
 		<?php
@@ -200,7 +171,7 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 }
 
 .asset-category-badge:hover {
-	background: #3b82f6;
+	background: #f63b3bff;
 	color: #ffffff;
 }
 

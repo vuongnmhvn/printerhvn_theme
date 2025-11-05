@@ -19,7 +19,6 @@ get_header();
 		$view_count = intval( get_post_meta( $asset_id, '_pinterhvn_view_count', true ) );
 		$save_count = intval( get_post_meta( $asset_id, '_pinterhvn_save_count', true ) );
 		$like_count = intval( get_post_meta( $asset_id, '_pinterhvn_like_count', true ) );
-		$download_count = intval( get_post_meta( $asset_id, '_pinterhvn_download_count', true ) );
 		
 		// Check if current user liked this asset
 		$current_user_id = get_current_user_id();
@@ -128,17 +127,15 @@ get_header();
 								</svg>
 							</button>
 							<?php endif; ?>
-						
-						<!-- Asset Link -->
-						<?php if ( $asset_link ) : ?>
 
-							<button class="action-icon btn-download" onclick="window.location.href='<?php echo esc_url( $asset_link ); ?>'" title="<?php esc_attr_e( 'Download', 'pinterhvn-theme' ); ?>">
-							<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-							</svg>
+							<!-- More Options -->
+							<button class="action-icon" title="<?php esc_attr_e( 'More', 'pinterhvn-theme' ); ?>">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+									<circle cx="12" cy="12" r="1" stroke-width="2"/>
+									<circle cx="12" cy="5" r="1" stroke-width="2"/>
+									<circle cx="12" cy="19" r="1" stroke-width="2"/>
+								</svg>
 							</button>
-						<?php endif; ?>
-						
 						</div>
 
 						<!-- Save Button (Right) -->
@@ -158,7 +155,7 @@ get_header();
 						<h1 class="pin-title"><?php the_title(); ?></h1>
 
 						<!-- Asset Stats -->
-						<?php if ( $view_count || $save_count || $download_count ) : ?>
+						<?php if ( $view_count || $save_count ) : ?>
 							<div class="asset-card-stats" style="margin-bottom: 16px; margin-top: 8px;">
 								<?php if ( $view_count ) : ?>
 									<div class="asset-card-stat" title="<?php esc_attr_e( 'Views', 'pinterhvn-theme' ); ?>">
@@ -195,6 +192,18 @@ get_header();
 							<div class="pin-description">
 								<?php the_content(); ?>
 							</div>
+						<?php endif; ?>
+
+						<!-- Asset Link -->
+						<?php if ( $asset_link ) : ?>
+							<a href="<?php echo esc_url( $asset_link ); ?>" class="pin-external-link" target="_blank" rel="nofollow">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+									<path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<polyline points="15 3 21 3 21 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<line x1="10" y1="14" x2="21" y2="3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<?php echo esc_html( parse_url( $asset_link, PHP_URL_HOST ) ); ?>
+							</a>
 						<?php endif; ?>
 
 						<!-- Author Info -->

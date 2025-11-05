@@ -23,9 +23,9 @@ get_header();
 
 		<!-- Profile Header -->
 		<div class="profile-header">
-			<h1 class="profile-title"><?php _e( 'Edit profile', 'pinterhvn-theme' ); ?></h1>
+			<h1 class="profile-title"><?php _e( 'Chỉnh sửa thông tin', 'pinterhvn-theme' ); ?></h1>
 			<p class="profile-subtitle">
-				<?php _e( 'Keep your personal details private. Information you add here is visible to anyone who can view your profile.', 'pinterhvn-theme' ); ?>
+				<?php _e( 'Giữ thông tin cá nhân của bạn ở chế độ riêng tư. Thông tin bạn thêm vào đây sẽ hiển thị cho bất kỳ ai có thể xem hồ sơ của bạn.', 'pinterhvn-theme' ); ?>
 			</p>
 		</div>
 
@@ -49,39 +49,39 @@ get_header();
 
 			<!-- First Name -->
 			<div class="form-section">
-				<label class="form-label" for="first_name"><?php _e( 'First name', 'pinterhvn-theme' ); ?></label>
+				<label class="form-label" for="first_name"><?php _e( 'Họ', 'pinterhvn-theme' ); ?></label>
 				<input 
 					type="text" 
 					id="first_name" 
 					name="first_name" 
 					class="form-input" 
 					value="<?php echo esc_attr( $current_user->first_name ); ?>"
-					placeholder="<?php esc_attr_e( 'First name', 'pinterhvn-theme' ); ?>"
+					placeholder="<?php esc_attr_e( '', 'pinterhvn-theme' ); ?>"
 				>
 			</div>
 
 			<!-- Last Name -->
 			<div class="form-section">
-				<label class="form-label" for="last_name"><?php _e( 'Last name', 'pinterhvn-theme' ); ?></label>
+				<label class="form-label" for="last_name"><?php _e( 'Tên', 'pinterhvn-theme' ); ?></label>
 				<input 
 					type="text" 
 					id="last_name" 
 					name="last_name" 
 					class="form-input" 
 					value="<?php echo esc_attr( $current_user->last_name ); ?>"
-					placeholder="<?php esc_attr_e( 'Last name', 'pinterhvn-theme' ); ?>"
+					placeholder="<?php esc_attr_e( '', 'pinterhvn-theme' ); ?>"
 				>
 			</div>
 
 			<!-- About / Bio -->
 			<div class="form-section">
-				<label class="form-label" for="user_bio"><?php _e( 'About', 'pinterhvn-theme' ); ?></label>
+				<label class="form-label" for="user_bio"><?php _e( 'Giới thiệu', 'pinterhvn-theme' ); ?></label>
 				<textarea 
 					id="user_bio" 
 					name="user_bio" 
 					class="form-textarea" 
 					rows="4"
-					placeholder="<?php esc_attr_e( 'Tell your story', 'pinterhvn-theme' ); ?>"
+					placeholder="<?php esc_attr_e( 'Một vài dòng về bản thân bạn', 'pinterhvn-theme' ); ?>"
 				><?php echo esc_textarea( get_user_meta( $current_user->ID, 'description', true ) ); ?></textarea>
 			</div>
 
@@ -101,7 +101,7 @@ get_header();
 
 			<!-- Username (readonly) -->
 			<div class="form-section">
-				<label class="form-label" for="user_login"><?php _e( 'Username', 'pinterhvn-theme' ); ?></label>
+				<label class="form-label" for="user_login"><?php _e( 'Tên đăng nhập', 'pinterhvn-theme' ); ?></label>
 				<input 
 					type="text" 
 					id="user_login" 
@@ -115,7 +115,7 @@ get_header();
 					<?php 
 					$profile_url = home_url( '/@' . $current_user->user_login );
 					printf( 
-						__( 'www.pinterhvn.local/@%s', 'pinterhvn-theme' ), 
+						__( 'https://pinterhvn.local/author/%s', 'pinterhvn-theme' ), 
 						esc_html( $current_user->user_login ) 
 					); 
 					?>

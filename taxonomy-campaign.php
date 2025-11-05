@@ -11,7 +11,8 @@ get_header();
 $term = get_queried_object();
 $campaign_id = $term->term_id;
 $description = get_term_meta( $campaign_id, 'campaign_description', true );
-$thumbnail = get_term_meta( $campaign_id, 'campaign_thumbnail', true );
+$thumbnail_id = get_term_meta( $campaign_id, 'campaign_thumbnail_id', true );
+$thumbnail_url = $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, 'full' ) : ''; // Lấy URL ảnh từ ID
 $start_date = get_term_meta( $campaign_id, 'campaign_start_date', true );
 $end_date = get_term_meta( $campaign_id, 'campaign_end_date', true );
 $status = get_term_meta( $campaign_id, 'campaign_status', true );
@@ -26,19 +27,11 @@ if ( ! $status ) $status = 'active';
 		<div class="campaign-header">
 			<div class="campaign-header-content">
 				
-				<!-- Back Button -->
-				<a href="<?php echo esc_url( home_url( '/campaigns/' ) ); ?>" class="btn-back">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-						<path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
-					<?php _e( 'Back to Campaigns', 'pinterhvn-theme' ); ?>
-				</a>
-
 				<!-- Campaign Info -->
 				<div class="campaign-hero">
-					<?php if ( $thumbnail ) : ?>
+					<?php if ( $thumbnail_url ) : // Sử dụng $thumbnail_url đã lấy được ?>
 						<div class="campaign-hero-image">
-							<img src="<?php echo esc_url( $thumbnail ); ?>" alt="<?php echo esc_attr( $term->name ); ?>">
+							<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php echo esc_attr( $term->name ); ?>">
 						</div>
 					<?php endif; ?>
 
@@ -158,7 +151,7 @@ if ( ! $status ) $status = 'active';
 				</div>
 			<?php else : ?>
 				<div class="empty-state">
-					<p><?php _e( 'No assets in this campaign yet.', 'pinterhvn-theme' ); ?></p>
+					<p><?php _e( 'Chưa có tài nguyên nào cho chiến dịch này.', 'pinterhvn-theme' ); ?></p>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -170,14 +163,16 @@ if ( ! $status ) $status = 'active';
 /* Campaign Single Page */
 .campaign-single-page {
 	background: #ffffff;
+	padding: 80px 0px 120px 0px;
 }
 
 /* Campaign Header */
 .campaign-header {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: linear-gradient(135deg, #ea6666ff 0%, #a24b4bff 100%);
 	color: #ffffff;
 	padding: 48px 0;
 	margin-bottom: 48px;
+	border-radius: 8px;
 }
 
 .campaign-header-content {
@@ -241,6 +236,7 @@ if ( ! $status ) $status = 'active';
 	font-weight: 700;
 	margin-bottom: 16px;
 	line-height: 1.2;
+	color: #fff;
 }
 
 .campaign-description {
@@ -282,7 +278,7 @@ if ( ! $status ) $status = 'active';
 
 /* Campaign Assets Section */
 .campaign-assets-section {
-	padding: 0 20px 48px;
+	/* padding: 0 20px 48px; */
 }
 
 .campaign-assets-grid {

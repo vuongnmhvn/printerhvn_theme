@@ -41,7 +41,7 @@ get_header();
 
 			<div class="load-more-wrapper text-center mt-4">
 				<button class="btn btn-primary" id="load-more-assets">
-					<?php _e( 'Load More', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Tải thêm', 'pinterhvn-theme' ); ?>
 				</button>
 				<div class="spinner" style="display: none;"></div>
 			</div>

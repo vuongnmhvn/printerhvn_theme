@@ -18,7 +18,7 @@ get_header();
 			$taxonomy = get_taxonomy( $term->taxonomy );
 			?>
 			
-			<div class="term-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+			<div class="term-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem;">
 				<?php
 				// Display category thumbnail if available
 				if ( $term->taxonomy === 'asset_category' ) {
@@ -80,7 +80,7 @@ get_header();
 
 			<div class="load-more-wrapper text-center mt-4">
 				<button class="btn btn-primary" id="load-more-assets">
-					<?php _e( 'Load More', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Tải thêm', 'pinterhvn-theme' ); ?>
 				</button>
 				<div class="spinner" style="display: none;"></div>
 			</div>

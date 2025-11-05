@@ -37,7 +37,7 @@
 						html = '<p style="color: #64748b; font-size: 14px;">You don\'t have any collections yet. Create one below!</p>';
 					} else {
 						response.data.collections.forEach(function(collection) {
-							html += '<label style="display: block; margin-bottom: 12px; cursor: pointer;">';
+							html += '<label style="cursor: pointer;">';
 							html += '<input type="checkbox" name="collections[]" value="' + collection.term_id + '" style="margin-right: 8px;">';
 							html += '<span>' + collection.name + ' (' + collection.count + ')</span>';
 							html += '</label>';

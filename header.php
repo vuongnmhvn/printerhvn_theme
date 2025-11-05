@@ -76,6 +76,17 @@
 						</a>
 					</li>
 
+					<li class="nav-item">
+						<a href="<?php echo esc_url( home_url( '/campaigns/' ) ); ?>" class="nav-link" title="<?php esc_attr_e( 'Campaigns', 'pinterhvn-theme' ); ?>">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+								<circle cx="12" cy="12" r="10" stroke-width="2"/>
+								<circle cx="12" cy="12" r="6" stroke-width="2"/>
+								<circle cx="12" cy="12" r="2" stroke-width="2"/>
+							</svg>
+							<span class="nav-label"><?php _e( 'Chiến dịch', 'pinterhvn-theme' ); ?></span>
+						</a>
+					</li>
+
 					<?php if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) : ?>
 					<li class="nav-item">
 						<a href="<?php echo esc_url( home_url( '/upload-asset/' ) ); ?>" class="nav-link" title="<?php esc_attr_e( 'Upload', 'pinterhvn-theme' ); ?>">
@@ -182,7 +193,7 @@
 				<input 
 					type="search" 
 					name="s" 
-					placeholder="<?php esc_attr_e( 'Search for assets...', 'pinterhvn-theme' ); ?>"
+					placeholder="<?php esc_attr_e( 'Nhập từ khoá cần tìm...', 'pinterhvn-theme' ); ?>"
 					value="<?php echo get_search_query(); ?>"
 					class="search-input"
 				>

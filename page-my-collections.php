@@ -23,7 +23,6 @@ get_header();
 	<div class="container-fluid">
 
 		<!-- Profile Header -->
-		<div class="profile-header-section">
 			<div class="profile-hero">
 				<!-- Back Button -->
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn-back">
@@ -60,14 +59,13 @@ get_header();
 			<div class="profile-tabs">
 				<a href="<?php echo esc_url( add_query_arg( 'tab', 'saved' ) ); ?>" 
 				   class="tab-link <?php echo ( $current_tab === 'saved' ) ? 'active' : ''; ?>">
-					<?php _e( 'Assets Saved', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Tài nguyên đã lưu', 'pinterhvn-theme' ); ?>
 				</a>
 				<a href="<?php echo esc_url( add_query_arg( 'tab', 'collections' ) ); ?>" 
 				   class="tab-link <?php echo ( $current_tab === 'collections' ) ? 'active' : ''; ?>">
-					<?php _e( 'Assets Collection', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Bộ sưu tập', 'pinterhvn-theme' ); ?>
 				</a>
 			</div>
-		</div>
 
 		<!-- Tab Content -->
 		<div class="tab-content">
@@ -240,7 +238,7 @@ get_header();
 <style>
 /* Profile/Collections Page Styles */
 .collections-page {
-	padding: 0;
+	padding: 80px 0px;
 	background: #ffffff;
 }
 
@@ -248,17 +246,9 @@ get_header();
 .profile-header-section {
 	border-bottom: 1px solid #e2e8f0;
 	background: #ffffff;
-	position: sticky;
+	/* position: sticky; */
 	top: 64px;
 	z-index: 100;
-}
-
-.profile-hero {
-	max-width: 680px;
-	margin: 0 auto;
-	padding: 40px 20px;
-	text-align: center;
-	position: relative;
 }
 
 .btn-back {
@@ -342,12 +332,22 @@ get_header();
 }
 
 /* Tabs */
+.profile-hero{
+	text-align: center;
+    padding: 30px 0px;
+}
+
 .profile-tabs {
 	display: flex;
 	justify-content: center;
 	gap: 32px;
 	padding: 0 20px;
 	border-top: 1px solid #e2e8f0;
+	position: sticky;
+    top: 60px;
+    z-index: 99;
+    background: #fff;
+	border-bottom: 1px solid #e2e8f0;
 }
 
 .tab-link {
@@ -413,7 +413,7 @@ get_header();
 	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 	gap: 24px;
 	padding: 0 20px;
-	max-width: 1400px;
+	/* max-width: 1400px; */
 	margin: 0 auto;
 }
 
