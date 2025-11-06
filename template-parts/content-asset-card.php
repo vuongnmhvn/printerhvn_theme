@@ -23,10 +23,11 @@ $preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', tru
 
 <article id="post-<?php the_ID(); ?>" <?php post_class( 'grid-item asset-card fade-in' ); ?> data-asset-id="<?php echo esc_attr( $asset_id ); ?>">
 	
+	<a href="<?php the_permalink(); ?>" class="stretched-link" aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'pinterhvn-theme' ), get_the_title() ) ); ?>"></a>
+
 	<!-- Asset Image/Video -->
 	<div class="asset-card-image">
-		<a href="<?php the_permalink(); ?>">
-			<?php
+		<?php
 			if ( $preview_video_id ) {
 				$preview_video_url = wp_get_attachment_url( $preview_video_id );
 				?>
@@ -72,9 +73,7 @@ $preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', tru
 					</svg>
 				</div>
 				<?php
-			}
-			?>
-		</a>
+			} ?>
 
 		<!-- Hover Overlay -->
 		<div class="asset-card-overlay">
@@ -108,7 +107,7 @@ $preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', tru
 					<?php _e( '', 'pinterhvn-theme' ); ?>
 				</button>
 
-				<?php if ( $asset_link ) : ?>
+				<?php if ( is_user_logged_in() && $asset_link ) : ?>
 					<a 
 						href="<?php echo esc_url( pinterhvn_get_asset_download_link( $asset_id ) ); ?>" 
 						class="asset-card-action download-btn"
@@ -128,9 +127,7 @@ $preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', tru
 	<!-- Asset Content -->
 	<div class="asset-card-content">
 		<h3 class="asset-card-title">
-			<a href="<?php the_permalink(); ?>">
-				<?php the_title(); ?>
-			</a>
+			<?php the_title(); ?>
 		</h3>
 
 		<!-- Author Meta -->

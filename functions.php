@@ -598,3 +598,116 @@ function pinterhvn_get_all_tags_ajax_handler() {
     wp_send_json_success( $tags );
 }
 add_action( 'wp_ajax_pinterhvn_get_all_tags', 'pinterhvn_get_all_tags_ajax_handler' );
+
+/**
+ * AJAX handler for loading more assets (Infinite Scroll)
+ */
+function pinterhvn_load_more_assets_handler() {
+    check_ajax_referer( 'pinterhvn_ajax_nonce', 'nonce' );
+
+    $paged = isset( $_POST['page'] ) ? intval( $_POST['page'] ) : 1;
+    $posts_per_page = isset( $_POST['posts_per_page'] ) ? intval( $_POST['posts_per_page'] ) : 12;
+
+    $args = array(
+        'post_type'      => 'digital_asset',
+        'posts_per_page' => $posts_per_page,
+        'paged'          => $paged,
+        'post_status'    => 'publish',
+    );
+
+    // Add author parameter if it exists
+    if ( ! empty( $_POST['author'] ) ) {
+        $args['author'] = intval( $_POST['author'] );
+    }
+
+    $query = new WP_Query( $args );
+
+    ob_start();
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            get_template_part( 'template-parts/content', 'asset-card' );
+        }
+    }
+    $html = ob_get_clean();
+
+    wp_send_json_success( array(
+        'html'     => $html,
+        'has_more' => $query->max_num_pages > $paged,
+    ) );
+}
+add_action( 'wp_ajax_pinterhvn_load_more_assets', 'pinterhvn_load_more_assets_handler' );
+add_action( 'wp_ajax_nopriv_pinterhvn_load_more_assets', 'pinterhvn_load_more_assets_handler' );
+
+/**
+ * Displays a login gate popup for non-logged-in users.
+ * This covers the entire site and requires login to proceed.
+ */
+function pinterhvn_login_gate_popup() {
+    // Only show for non-logged-in users
+    if ( is_user_logged_in() ) {
+        return;
+    }
+    ?>
+    <div class="login-gate-overlay">
+        <div class="login-popup">
+            <div class="login-popup-header">
+                <?php
+                if ( function_exists( 'the_custom_logo' ) && has_custom_logo() ) {
+                    the_custom_logo();
+                } else {
+                    echo '<h1 class="site-title-text">' . get_bloginfo( 'name' ) . '</h1>';
+                }
+                ?>
+                <h2 class="welcome-message"><?php _e( 'Chào mừng đến với PinterHVN', 'pinterhvn-theme' ); ?></h2>
+                <p class="welcome-subtext"><?php _e( 'Cổng quản lý tài nguyên kỹ thuật số của HVN Group', 'pinterhvn-theme' ); ?></p>
+            </div>
+
+            <div class="login-popup-body">
+                <form name="loginform" id="loginform-popup" action="<?php echo esc_url( site_url( 'wp-login.php', 'login_post' ) ); ?>" method="post">
+                    
+                    <div class="form-group">
+                        <label for="user_login_popup"><?php _e( 'Email / Username', 'pinterhvn-theme' ); ?></label>
+                        <input type="text" name="log" id="user_login_popup" class="input" value="" size="20" placeholder="">
+                    </div>
+
+                    <div class="form-group password-group">
+                        <label for="user_pass_popup"><?php _e( 'Mật khẩu', 'pinterhvn-theme' ); ?></label>
+                        <input type="password" name="pwd" id="user_pass_popup" class="input" value="" size="20" placeholder="">
+                        <button type="button" class="toggle-password" aria-label="<?php esc_attr_e( 'Show password', 'pinterhvn-theme' ); ?>"></button>
+                    </div>
+
+                    <div class="form-group-sub">
+                        <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="forgot-password-link"><?php _e( 'Quên mật khẩu?', 'pinterhvn-theme' ); ?></a>
+                    </div>
+
+                    <p class="login-submit">
+                        <input type="submit" name="wp-submit" id="wp-submit-popup" class="button button-primary button-large" value="<?php esc_attr_e( 'Đăng nhập', 'pinterhvn-theme' ); ?>">
+                        <input type="hidden" name="redirect_to" value="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ) ); ?>">
+                    </p>
+
+                </form>
+
+                <div class="sso-divider">
+                    <span><?php _e( 'HOẶC', 'pinterhvn-theme' ); ?></span>
+                </div>
+
+                <?php
+                // Assuming the Google SSO login URL is available via a function or option.
+                // Replace '#' with the actual SSO login URL.
+                $sso_url = apply_filters( 'pinterhvn_google_sso_login_url', '#' );
+                ?>
+                <a href="<?php echo esc_url( $sso_url ); ?>" class="btn-sso-google">
+                    <img src="<?php echo PINTERHVN_THEME_URI . '/assets/images/google-logo.svg'; ?>" alt="Google" width="20" height="20">
+                    <span><?php _e( 'Tiếp tục với Google', 'pinterhvn-theme' ); ?></span>
+                </a>
+
+                <div class="login-footer-text">
+                    <p><?php _e( 'Bằng cách tiếp tục, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> của PinterHVN và xác nhận rằng bạn đã đọc <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.', 'pinterhvn-theme' ); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+add_action( 'wp_footer', 'pinterhvn_login_gate_popup' );

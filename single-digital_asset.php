@@ -59,7 +59,7 @@ get_header();
 						if ( $preview_video_id ) {
 							$preview_video_url = wp_get_attachment_url( $preview_video_id );
 							?>
-							<video class="pin-video" controls autoplay loop muted playsinline>
+							<video class="pin-video" controls autoplay loop playsinline>
 								<source src="<?php echo esc_url( $preview_video_url ); ?>" type="video/mp4">
 							</video>
 							<?php
@@ -73,7 +73,7 @@ get_header();
 							if ( strpos( $mime_type, 'video' ) === 0 || $file_extension === 'mp4' ) {
 								// MP4 Video
 								?>
-								<video class="pin-video" controls autoplay loop muted playsinline>
+								<video class="pin-video" controls autoplay loop playsinline>
 									<source src="<?php echo esc_url( $attachment_url ); ?>" type="<?php echo esc_attr( $mime_type ); ?>">
 								</video>
 								<div class="video-duration-badge">
@@ -141,12 +141,13 @@ get_header();
 						
 						<!-- Asset Link -->
 						<?php if ( $asset_link ) : ?>
-
+						<?php if ( is_user_logged_in() ) : ?>
 							<button class="action-icon btn-download" onclick="window.location.href='<?php echo esc_url( $asset_link ); ?>'" title="<?php esc_attr_e( 'Download', 'pinterhvn-theme' ); ?>">
 							<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
 							<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
 							</svg>
 							</button>
+						<?php endif; ?>
 						<?php endif; ?>
 						
 						</div>

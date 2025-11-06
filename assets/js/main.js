@@ -25,6 +25,7 @@
             this.initInfiniteScroll();
             this.initScrollToTop();
             this.initPageShowRelayout();
+            this.initLoginPopup();
         },
 
         initMasonry: function() {
@@ -45,6 +46,11 @@
                 if (self.hasMorePosts()) {
                     $('.load-more-wrapper').fadeIn();
                 }
+
+                // Force a re-layout after a short delay to fix initial overlapping issues.
+                setTimeout(function() {
+                    self.$grid.masonry('layout');
+                }, 500);
             });
         },
 
@@ -71,6 +77,12 @@
                 posts_per_page: 12,
                 nonce: pinterhvnTheme.nonce
             };
+
+            // If on an author page, add the author ID to the request
+            var authorId = self.$grid.data('author-id');
+            if (authorId) {
+                data.author = authorId;
+            }
 
             $.ajax({
                 url: pinterhvnTheme.ajax_url,
@@ -141,6 +153,21 @@
                         self.$grid.masonry('layout');
                     }, 10);
                 }
+            });
+        },
+
+        initLoginPopup: function() {
+            var $popup = $('.login-popup');
+            if ($popup.length === 0) return;
+
+            $popup.on('click', '.toggle-password', function() {
+                var $btn = $(this);
+                var $input = $btn.prev('input[type="password"], input[type="text"]');
+                var isPassword = $input.attr('type') === 'password';
+
+                $input.attr('type', isPassword ? 'text' : 'password');
+                $btn.toggleClass('is-hidden', isPassword);
+                $btn.attr('aria-label', isPassword ? 'Hide password' : 'Show password');
             });
         }
     };
