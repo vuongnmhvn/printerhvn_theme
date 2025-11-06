@@ -112,16 +112,6 @@
 					</li>
 					<?php endif; ?>
 
-					<li class="nav-item">
-						<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="nav-link" title="<?php esc_attr_e( 'Campaigns', 'pinterhvn-theme' ); ?>">
-								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-									<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									<line x1="4" y1="22" x2="4" y2="15" stroke-width="2" stroke-linecap="round"/>
-								</svg>
-							<span class="nav-label"><?php _e( 'Blog', 'pinterhvn-theme' ); ?></span>
-						</a>
-					</li>
-
 					<?php if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) : ?>
 					<li class="nav-item">
 						<a href="<?php echo esc_url( home_url( '/upload-asset/' ) ); ?>" class="nav-link" title="<?php esc_attr_e( 'Upload', 'pinterhvn-theme' ); ?>">
