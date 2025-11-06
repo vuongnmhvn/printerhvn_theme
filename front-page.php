@@ -97,11 +97,11 @@ get_header();
 				</svg>
 				
 				<h2 style="font-size: 1.75rem; margin-bottom: 1rem; color: #0f172a;">
-					<?php _e( 'No Assets Found', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Chưa có tài nguyên', 'pinterhvn-theme' ); ?>
 				</h2>
 				
 				<p style="color: #64748b; font-size: 1.125rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-					<?php _e( 'Start building your digital asset library by uploading your first asset.', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Bắt đầu xây dựng thư viện tài sản kỹ thuật số của bạn bằng cách tải lên tài sản đầu tiên.', 'pinterhvn-theme' ); ?>
 				</p>
 				
 				<?php if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) : ?>
@@ -109,7 +109,7 @@ get_header();
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
 							<path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 						</svg>
-						<?php _e( 'Upload Your First Asset', 'pinterhvn-theme' ); ?>
+						<?php _e( 'Tải lên tài nguyên', 'pinterhvn-theme' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

@@ -168,7 +168,7 @@ p {
 .archive-description {
     color: #64748b;
     font-size: 1.125rem;
-    margin: 0 auto;
+    margin: 0 0 20px 0;
 }
 
 /*--------------------------------------------------------------
@@ -1716,6 +1716,25 @@ select:focus {
     font-weight: 600;
     text-decoration: underline;
 }
+.filter-chip {
+    background: #e2e8f0;
+    color: #1e293b;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: inline-flex; /* Đảm bảo padding và border-radius hoạt động tốt */
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-chip:hover {
+    background-color: #e60023; /* Màu đỏ chủ đạo */
+    color: #ffffff; /* Chữ trắng khi hover */
+}
+
 
 .author-name a{
     color: #808080;

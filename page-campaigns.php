@@ -149,8 +149,8 @@ get_header();
 						<rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1"/>
 						<path d="M3 9h18M9 21V9" stroke-width="1"/>
 					</svg>
-					<h2><?php _e( 'No campaigns yet', 'pinterhvn-theme' ); ?></h2>
-					<p><?php _e( 'Campaigns will appear here when admins create them', 'pinterhvn-theme' ); ?></p>
+					<h2><?php _e( 'Chưa có chiến dịch nào', 'pinterhvn-theme' ); ?></h2>
+					<p><?php _e( 'Các chiến dịch sẽ xuất hiện ở đây khi người quản trị tạo chúng', 'pinterhvn-theme' ); ?></p>
 				</div>
 
 			<?php endif; ?>

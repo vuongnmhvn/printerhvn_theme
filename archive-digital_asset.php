@@ -24,6 +24,54 @@ get_header();
 			?>
 		</header>
 
+		<div class="archive-filters" style="margin-bottom: 2rem;">
+			<!-- Categories List -->
+			<?php
+			$categories = get_terms( array(
+				'taxonomy'   => 'asset_category',
+				'hide_empty' => true,
+			) );
+
+			if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) :
+				?>
+				<div class="filter-section" style="margin-bottom: 1.5rem;">
+					<h3 class="filter-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+						<?php _e( 'Danh mục', 'pinterhvn-theme' ); ?>
+					</h3>
+					<div class="filter-chips" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+						<?php foreach ( $categories as $category ) : ?> 
+							<a href="<?php echo esc_url( get_term_link( $category ) ); ?>" class="filter-chip">
+								<?php echo esc_html( $category->name ); ?>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<!-- Tags List -->
+			<?php
+			$tags = get_terms( array(
+				'taxonomy'   => 'asset_tag',
+				'hide_empty' => true,
+			) );
+
+			if ( ! empty( $tags ) && ! is_wp_error( $tags ) ) :
+				?>
+				<div class="filter-section">
+					<h3 class="filter-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+						<?php _e( 'Chủ đề', 'pinterhvn-theme' ); ?>
+					</h3>
+					<div class="filter-chips" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+						<?php foreach ( $tags as $tag ) : ?> 
+							<a href="<?php echo esc_url( get_term_link( $tag ) ); ?>" class="filter-chip">
+								#<?php echo esc_html( $tag->name ); ?>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+		</div>
+
 		<?php if ( have_posts() ) : ?>
 
 			<div class="pinterhvn-grid" id="assets-grid">
@@ -56,11 +104,11 @@ get_header();
 				</svg>
 				
 				<h2 style="font-size: 2rem; margin-bottom: 1rem;">
-					<?php _e( 'No Assets Found', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Chưa có tài nguyên nào', 'pinterhvn-theme' ); ?>
 				</h2>
 				
 				<p style="color: #64748b; margin-bottom: 2rem;">
-					<?php _e( 'There are no digital assets available yet. Be the first to upload!', 'pinterhvn-theme' ); ?>
+					<?php _e( 'Bắt đầu xây dựng thư viện tài sản kỹ thuật số của bạn bằng cách tải lên tài sản đầu tiên.', 'pinterhvn-theme' ); ?>
 				</p>
 				
 				<?php if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) : ?>
@@ -68,7 +116,7 @@ get_header();
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" style="margin-right: 0.5rem;">
 							<path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 						</svg>
-						<?php _e( 'Upload Your First Asset', 'pinterhvn-theme' ); ?>
+						<?php _e( 'Tải lên tài nguyên', 'pinterhvn-theme' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>
