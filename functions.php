@@ -287,7 +287,7 @@ function pinterhvn_advanced_search_filter( $query ) {
     add_filter( 'posts_join', 'pinterhvn_search_join', 10, 2 );
     add_filter( 'posts_where', 'pinterhvn_search_where', 10, 2 );
     add_filter( 'posts_orderby', 'pinterhvn_search_orderby', 10, 2 );
-    add_filter( 'posts_distinct', function() { return "DISTINCT"; } );
+    add_filter( 'posts_groupby', 'pinterhvn_search_groupby', 10, 2 );
 }
 add_action( 'pre_get_posts', 'pinterhvn_advanced_search_filter' );
 
@@ -334,6 +334,14 @@ function pinterhvn_search_orderby( $orderby, $query ) {
         return "relevance DESC, post_date DESC";
     }
     return $orderby;
+}
+
+function pinterhvn_search_groupby( $groupby, $query ) {
+    global $wpdb;
+    if ( $query->is_search() ) {
+        return "{$wpdb->posts}.ID";
+    }
+    return $groupby;
 }
 
 function pinterhvn_get_user_collections( $user_id = 0 ) {

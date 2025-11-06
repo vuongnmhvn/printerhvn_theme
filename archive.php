@@ -50,12 +50,8 @@ get_header();
 						</header>
 
 						<div class="entry-summary">
-							<?php the_excerpt(); ?>
+							<?php the_content( esc_html__( 'Read More →', 'pinterhvn-theme' ) ); ?>
 						</div>
-
-						<a href="<?php the_permalink(); ?>" class="read-more" style="color: #3b82f6; font-weight: 600; display: inline-block; margin-top: 0.5rem;">
-							<?php esc_html_e( 'Read More →', 'pinterhvn-theme' ); ?>
-						</a>
 
 					</article>
 					<?php

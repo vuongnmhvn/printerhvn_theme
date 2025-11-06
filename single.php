@@ -17,7 +17,7 @@ get_header();
 			the_post();
 			?>
 
-			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?> style="max-width: 800px;margin: 0 auto">
 				
 				<?php if ( has_post_thumbnail() ) : ?>
 					<div class="post-thumbnail" style="margin-bottom: 2rem; border-radius: 12px; overflow: hidden;">
@@ -48,19 +48,7 @@ get_header();
 
 				<div class="entry-content" style="max-width: 800px;">
 					<?php
-					the_content(
-						sprintf(
-							wp_kses(
-								__( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'pinterhvn-theme' ),
-								array(
-									'span' => array(
-										'class' => array(),
-									),
-								)
-							),
-							wp_kses_post( get_the_title() )
-						)
-					);
+					the_content();
 
 					wp_link_pages(
 						array(
