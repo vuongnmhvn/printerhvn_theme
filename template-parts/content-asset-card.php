@@ -16,6 +16,9 @@ $download_count = get_post_meta( $asset_id, '_pinterhvn_download_count', true );
 $view_count = $view_count ? intval( $view_count ) : 0;
 $save_count = $save_count ? intval( $save_count ) : 0;
 $download_count = $download_count ? intval( $download_count ) : 0;
+
+// Get preview video
+$preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', true );
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class( 'grid-item asset-card fade-in' ); ?> data-asset-id="<?php echo esc_attr( $asset_id ); ?>">
@@ -24,7 +27,15 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 	<div class="asset-card-image">
 		<a href="<?php the_permalink(); ?>">
 			<?php
-			if ( has_post_thumbnail() ) {
+			if ( $preview_video_id ) {
+				$preview_video_url = wp_get_attachment_url( $preview_video_id );
+				?>
+				<video class="asset-video" muted loop playsinline preload="metadata">
+					<source src="<?php echo esc_url( $preview_video_url ); ?>" type="video/mp4">
+				</video>
+				<?php
+				the_post_thumbnail( 'pinterhvn-medium', array( 'class' => 'asset-video-poster', 'style' => 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;' ) );
+			} elseif ( has_post_thumbnail() ) {
 				$thumbnail_id = get_post_thumbnail_id();
 				$mime_type = get_post_mime_type( $thumbnail_id );
 				$attachment_url = wp_get_attachment_url( $thumbnail_id );
@@ -77,7 +88,7 @@ $download_count = $download_count ? intval( $download_count ) : 0;
 						<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
 						</svg>
-						<?php _e( 'Save', 'pinterhvn-theme' ); ?>
+						<?php _e( 'Lưu', 'pinterhvn-theme' ); ?>
 					</button>
 				<?php endif; ?>
 

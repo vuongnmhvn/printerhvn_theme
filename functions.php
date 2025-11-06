@@ -236,13 +236,105 @@ function pinterhvn_track_asset_view() {
 }
 add_action( 'wp_head', 'pinterhvn_track_asset_view' );
 
-function pinterhvn_search_filter( $query ) {
-	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
-		$query->set( 'post_type', 'digital_asset' );
-	}
-	return $query;
+/**
+ * Helper function to remove Vietnamese accents.
+ *
+ * @param string $str The string to remove accents from.
+ * @return string String without accents.
+ */
+function pinterhvn_remove_accents( $str ) {
+    $str = preg_replace( '/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/', 'a', $str );
+    $str = preg_replace( '/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/', 'e', $str );
+    $str = preg_replace( '/(ì|í|ị|ỉ|ĩ)/', 'i', $str );
+    $str = preg_replace( '/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/', 'o', $str );
+    $str = preg_replace( '/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/', 'u', $str );
+    $str = preg_replace( '/(ỳ|ý|ỵ|ỷ|ỹ)/', 'y', $str );
+    $str = preg_replace( '/(đ)/', 'd', $str );
+    $str = preg_replace( '/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/', 'A', $str );
+    $str = preg_replace( '/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/', 'E', $str );
+    $str = preg_replace( '/(Ì|Í|Ị|Ỉ|Ĩ)/', 'I', $str );
+    $str = preg_replace( '/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/', 'O', $str );
+    $str = preg_replace( '/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/', 'U', $str );
+    $str = preg_replace( '/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/', 'Y', $str );
+    $str = preg_replace( '/(Đ)/', 'D', $str );
+    return $str;
 }
-add_filter( 'pre_get_posts', 'pinterhvn_search_filter' );
+
+/**
+ * Advanced search functionality.
+ * - Searches both accented and unaccented keywords.
+ * - Searches in post title, content, and 'asset_tag' taxonomy.
+ * - Orders results by relevance.
+ */
+function pinterhvn_advanced_search_filter( $query ) {
+    if ( is_admin() || ! $query->is_main_query() || ! $query->is_search() ) {
+        return;
+    }
+
+    $search_term = $query->get( 's' );
+    if ( empty( $search_term ) ) {
+        return;
+    }
+
+    $query->set( 'post_type', 'digital_asset' );
+    // Suppress filters to avoid conflicts with other plugins/themes
+    $query->set( 'suppress_filters', false );
+
+    // Remove the default search filter
+    remove_filter( 'posts_search', '_filter_posts_search', 10, 2 );
+
+    add_filter( 'posts_fields', 'pinterhvn_search_fields', 10, 2 );
+    add_filter( 'posts_join', 'pinterhvn_search_join', 10, 2 );
+    add_filter( 'posts_where', 'pinterhvn_search_where', 10, 2 );
+    add_filter( 'posts_orderby', 'pinterhvn_search_orderby', 10, 2 );
+    add_filter( 'posts_distinct', function() { return "DISTINCT"; } );
+}
+add_action( 'pre_get_posts', 'pinterhvn_advanced_search_filter' );
+
+function pinterhvn_search_fields( $fields, $query ) {
+    global $wpdb;
+    $search_term = $query->get( 's' );
+    $like = '%' . $wpdb->esc_like( $search_term ) . '%';
+
+    $relevance = $wpdb->prepare( "
+        (CASE WHEN {$wpdb->posts}.post_title LIKE %s COLLATE utf8mb4_unicode_ci THEN 10 ELSE 0 END) +
+        (CASE WHEN terms.name LIKE %s COLLATE utf8mb4_unicode_ci THEN 5 ELSE 0 END) +
+        (CASE WHEN {$wpdb->posts}.post_content LIKE %s COLLATE utf8mb4_unicode_ci THEN 2 ELSE 0 END)
+    ", $like, $like, $like );
+
+    return $fields . ", " . $relevance . " AS relevance";
+}
+
+function pinterhvn_search_join( $join, $query ) {
+    global $wpdb;
+    $join .= " LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id ";
+    $join .= " LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'asset_tag' ";
+    $join .= " LEFT JOIN {$wpdb->terms} terms ON tt.term_id = terms.term_id ";
+    return $join;
+}
+
+function pinterhvn_search_where( $where, $query ) {
+    global $wpdb;
+    $search_term = $query->get( 's' );
+
+    $like = '%' . $wpdb->esc_like( $search_term ) . '%';
+    
+    // Build our own WHERE clause
+    $where = $wpdb->prepare( " AND (
+        ({$wpdb->posts}.post_title LIKE %s COLLATE utf8mb4_unicode_ci) OR
+        ({$wpdb->posts}.post_content LIKE %s COLLATE utf8mb4_unicode_ci) OR
+        (terms.name LIKE %s COLLATE utf8mb4_unicode_ci)
+    )", $like, $like, $like );
+
+    return $where;
+}
+
+function pinterhvn_search_orderby( $orderby, $query ) {
+    if ( $query->is_search() ) {
+        return "relevance DESC, post_date DESC";
+    }
+    return $orderby;
+}
 
 function pinterhvn_get_user_collections( $user_id = 0 ) {
 	if ( ! $user_id ) $user_id = get_current_user_id();
@@ -334,3 +426,175 @@ function pinterhvn_pagination() {
 	) );
 	echo '</nav>';
 }
+
+/**
+ * Handle asset upload from the front-end form.
+ * This function should be placed in your theme's functions.php file.
+ */
+function pinterhvn_handle_asset_upload() {
+    // Verify nonce
+    if ( ! isset( $_POST['pinterhvn_upload_nonce'] ) || ! wp_verify_nonce( $_POST['pinterhvn_upload_nonce'], 'pinterhvn_upload_asset' ) ) {
+        wp_die( 'Security check failed.' );
+    }
+
+    // Check user permissions
+    if ( ! current_user_can( 'edit_posts' ) ) {
+        wp_die( 'You do not have permission to upload assets.' );
+    }
+
+    // Sanitize and prepare post data
+    $asset_title       = sanitize_text_field( $_POST['asset_title'] );
+    $asset_description = wp_kses_post( $_POST['asset_description'] );
+    $asset_link        = esc_url_raw( $_POST['asset_link'] );
+    $asset_categories  = array();
+    if ( ! empty( $_POST['asset_category'] ) && is_array( $_POST['asset_category'] ) ) {
+        $asset_categories = array_map( 'intval', $_POST['asset_category'] );
+    }
+    $asset_collections = array();
+	if ( ! empty( $_POST['asset_collections'] ) && is_array( $_POST['asset_collections'] ) ) {
+		$asset_collections = array_map( 'intval', $_POST['asset_collections'] );
+	}
+    $asset_tags = isset($_POST['asset_tags']) ? sanitize_text_field( $_POST['asset_tags'] ) : '';
+
+
+    // Basic validation
+    if ( empty( $asset_title ) || empty( $_FILES['asset_thumbnail']['name'] ) ) {
+        wp_die( 'Title and a media file are required.' );
+    }
+
+    $post_data = array(
+        'post_title'   => $asset_title,
+        'post_content' => $asset_description,
+        'post_status'  => 'publish',
+        'post_author'  => get_current_user_id(),
+        'post_type'    => 'digital_asset',
+    );
+
+    // Insert the post into the database
+    $post_id = wp_insert_post( $post_data );
+
+    if ( is_wp_error( $post_id ) ) {
+        wp_die( $post_id->get_error_message() );
+    }
+
+    // These files are needed for media_handle_upload()
+    require_once( ABSPATH . 'wp-admin/includes/image.php' );
+    require_once( ABSPATH . 'wp-admin/includes/file.php' );
+    require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+    // Handle file upload (thumbnail)
+    if ( ! empty( $_FILES['asset_thumbnail']['name'] ) ) {
+        $attachment_id = media_handle_upload( 'asset_thumbnail', $post_id );
+
+        if ( ! is_wp_error( $attachment_id ) ) {
+            set_post_thumbnail( $post_id, $attachment_id );
+        } else {
+            // If upload fails, delete the post and show an error
+            wp_delete_post( $post_id, true );
+            wp_die( 'File upload failed: ' . $attachment_id->get_error_message() );
+        }
+    }
+
+    // Handle preview video upload
+    if ( ! empty( $_FILES['asset_preview_video']['name'] ) ) {
+        $preview_video_id = media_handle_upload( 'asset_preview_video', $post_id );
+
+        if ( ! is_wp_error( $preview_video_id ) ) {
+            update_post_meta( $post_id, '_pinterhvn_preview_video_id', $preview_video_id );
+        } else {
+            // Optional: Log error, but don't kill the process if only preview video fails
+        }
+    }
+
+    // Update post meta
+    if ( ! empty( $asset_link ) ) {
+        update_post_meta( $post_id, '_pinterhvn_asset_link', $asset_link );
+    }
+
+    // Set taxonomies
+    if ( ! empty( $asset_categories ) ) {
+        wp_set_post_terms( $post_id, $asset_categories, 'asset_category' );
+    }
+    if ( ! empty( $asset_tags ) ) {
+        wp_set_post_terms( $post_id, $asset_tags, 'asset_tag' );
+    }
+    if ( ! empty( $asset_collections ) ) {
+		wp_set_post_terms( $post_id, $asset_collections, 'asset_collection' );
+	}
+
+    // Redirect to the new asset page on success
+    wp_redirect( get_permalink( $post_id ) );
+    exit;
+}
+add_action( 'admin_post_pinterhvn_upload_asset', 'pinterhvn_handle_asset_upload' );
+
+/**
+ * AJAX handler for sideloading an image from a URL.
+ */
+function pinterhvn_sideload_from_url() {
+    check_ajax_referer( 'pinterhvn_sideload_nonce', 'nonce' );
+
+    if ( ! current_user_can( 'upload_files' ) ) {
+        wp_send_json_error( __( 'You do not have permission to upload files.', 'pinterhvn-theme' ), 403 );
+    }
+
+    if ( empty( $_POST['file_url'] ) ) {
+        wp_send_json_error( __( 'No file URL provided.', 'pinterhvn-theme' ), 400 );
+    }
+
+    $file_url = esc_url_raw( $_POST['file_url'] );
+
+    // These files are needed for media_handle_sideload()
+    require_once( ABSPATH . 'wp-admin/includes/image.php' );
+    require_once( ABSPATH . 'wp-admin/includes/file.php' );
+    require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+    // Download file to temp location
+    $tmp = download_url( $file_url );
+
+    if ( is_wp_error( $tmp ) ) {
+        @unlink( $tmp );
+        wp_send_json_error( $tmp->get_error_message(), 400 );
+    }
+
+    $file_array = array(
+        'name'     => basename( $file_url ),
+        'tmp_name' => $tmp,
+    );
+
+    // Sideload it
+    $id = media_handle_sideload( $file_array, 0 ); // 0 means not attached to any post
+
+    if ( is_wp_error( $id ) ) {
+        @unlink( $file_array['tmp_name'] );
+        wp_send_json_error( $id->get_error_message(), 500 );
+    }
+
+    $attachment_url = wp_get_attachment_url( $id );
+
+    wp_send_json_success( array(
+        'id'       => $id,
+        'url'      => $attachment_url,
+        'type'     => get_post_mime_type( $id ),
+        'filename' => basename( $attachment_url ),
+    ) );
+}
+add_action( 'wp_ajax_pinterhvn_sideload_from_url', 'pinterhvn_sideload_from_url' );
+
+/**
+ * AJAX handler to get all asset tags.
+ */
+function pinterhvn_get_all_tags_ajax_handler() {
+    $tags = get_terms( array(
+        'taxonomy'   => 'asset_tag',
+        'hide_empty' => false,
+        'fields'     => 'names',
+    ) );
+
+    if ( is_wp_error( $tags ) ) {
+        wp_send_json_error( 'Could not retrieve tags.' );
+    }
+
+    wp_send_json_success( $tags );
+}
+add_action( 'wp_ajax_pinterhvn_get_all_tags', 'pinterhvn_get_all_tags_ajax_handler' );

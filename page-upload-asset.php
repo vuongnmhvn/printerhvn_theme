@@ -18,6 +18,27 @@ if ( ! current_user_can( 'edit_posts' ) ) {
 	wp_die( __( 'You do not have permission to upload assets.', 'pinterhvn-theme' ) );
 }
 
+/**
+ * Recursively displays category checkboxes with indentation for children.
+ *
+ * @param array $categories Array of category objects.
+ * @param int   $parent_id  Parent category ID.
+ * @param int   $level      Indentation level.
+ */
+function pinterhvn_display_category_checkboxes( $categories, $parent_id = 0, $level = 0 ) {
+	foreach ( $categories as $category ) {
+		if ( $category->parent == $parent_id ) {
+			echo '<label class="category-checkbox-item --level-' . esc_attr( $level ) . '">';
+			echo '<input type="checkbox" name="asset_category[]" value="' . esc_attr( $category->term_id ) . '">';
+			echo '<span>' . esc_html( $category->name ) . '</span>';
+			echo '</label>';
+
+			// Recursively call for children
+			pinterhvn_display_category_checkboxes( $categories, $category->term_id, $level + 1 );
+		}
+	}
+}
+
 get_header();
 ?>
 
@@ -31,8 +52,9 @@ get_header();
 		</div>
 
 		<!-- Upload Form -->
-		<form id="pinterhvn-upload-form" class="upload-form" enctype="multipart/form-data">
+		<form id="pinterhvn-upload-form" class="upload-form" method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" enctype="multipart/form-data">
 			<?php wp_nonce_field( 'pinterhvn_upload_asset', 'pinterhvn_upload_nonce' ); ?>
+			<input type="hidden" name="action" value="pinterhvn_upload_asset">
 
 			<div class="upload-grid">
 				
@@ -56,29 +78,26 @@ get_header();
 						-->
 						<div class="drop-zone-content" id="drop-zone-content" style="pointer-events: none;">
 							<div class="upload-icon">
-								<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+								<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 									<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 									<polyline points="17 8 12 3 7 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 									<line x1="12" y1="3" x2="12" y2="15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 								</svg>
 							</div>
-							<p class="drop-zone-text"><?php _e( 'Choose a file or drag and drop it here', 'pinterhvn-theme' ); ?></p>
+							<p class="drop-zone-text"><?php _e( 'Chọn một tập tin hoặc kéo và thả nó vào đây', 'pinterhvn-theme' ); ?></p>
 							<p class="drop-zone-hint">
-								<?php _e( 'We recommend using high quality .jpg files less than 20 MB or .mp4 files less than 200 MB.', 'pinterhvn-theme' ); ?>
+								<?php _e( 'Chúng tôi khuyên bạn nên sử dụng tệp .jpg chất lượng cao có dung lượng dưới 20 MB hoặc tệp .mp4 có dung lượng dưới 200 MB.', 'pinterhvn-theme' ); ?>
 							</p>
-							<button type="button" class="btn btn-choose-file" id="choose-file-btn">
-								<?php _e( 'Choose file', 'pinterhvn-theme' ); ?>
-							</button>
 						</div>
 
 						<!-- Preview Area -->
 						<div class="preview-area" id="preview-area" style="display: none;">
 							<div class="preview-wrapper">
-								<img id="preview-image" style="display: none;" alt="Preview">
-								<video id="preview-video" style="display: none;" autoplay loop muted playsinline></video>
+								<img id="preview-image" alt="Preview" style="display:none;">
+								<video id="preview-video" autoplay loop muted playsinline style="display:none;"></video>
 							</div>
 							<button type="button" class="btn-change-file" id="change-file-btn">
-								<?php _e( 'Change', 'pinterhvn-theme' ); ?>
+								<?php _e( 'Đổi hình', 'pinterhvn-theme' ); ?>
 							</button>
 						</div>
 					</label>
@@ -86,7 +105,7 @@ get_header();
 					<!-- Save from URL -->
 					<div class="url-upload-section">
 						<button type="button" class="btn-url-upload" id="toggle-url-upload">
-							<?php _e( 'Save from URL', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Lưu từ URL', 'pinterhvn-theme' ); ?>
 						</button>
 					</div>
 
@@ -98,14 +117,14 @@ get_header();
 					<!-- Title -->
 					<div class="form-group">
 						<label for="asset_title" class="form-label">
-							<?php _e( 'Title', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Tiêu đề', 'pinterhvn-theme' ); ?>
 						</label>
 						<input 
 							type="text" 
 							id="asset_title" 
 							name="asset_title" 
 							class="form-input" 
-							placeholder="<?php esc_attr_e( 'Add a title', 'pinterhvn-theme' ); ?>"
+							placeholder="<?php esc_attr_e( 'Nhập tiêu đề hiển thị ngắn gọn', 'pinterhvn-theme' ); ?>"
 							required
 						>
 					</div>
@@ -113,28 +132,42 @@ get_header();
 					<!-- Description -->
 					<div class="form-group">
 						<label for="asset_description" class="form-label">
-							<?php _e( 'Description', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Mô tả', 'pinterhvn-theme' ); ?>
 						</label>
 						<textarea 
 							id="asset_description" 
 							name="asset_description" 
 							class="form-textarea" 
 							rows="5"
-							placeholder="<?php esc_attr_e( 'Add a detailed description', 'pinterhvn-theme' ); ?>"
+							placeholder="<?php esc_attr_e( 'Mô tả ngắn gọn tài nguyên (bao gồm từ khoá phổ biến)', 'pinterhvn-theme' ); ?>"
 						></textarea>
+					</div>
+
+					<!-- Asset Preview Video -->
+					<div class="form-group">
+						<label for="asset_preview_video" class="form-label">
+							<?php _e( 'Video hiển thị tài nguyên (không bắt buộc)', 'pinterhvn-theme' ); ?>
+						</label>
+						<input 
+							type="file" 
+							id="asset_preview_video" 
+							name="asset_preview_video" 
+							class="form-input"
+							accept="video/mp4"
+						>
 					</div>
 
 					<!-- Asset Link -->
 					<div class="form-group">
 						<label for="asset_link" class="form-label">
-							<?php _e( 'Link', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Link tải xuống', 'pinterhvn-theme' ); ?>
 						</label>
 						<input 
 							type="url" 
 							id="asset_link" 
 							name="asset_link" 
 							class="form-input" 
-							placeholder="<?php esc_attr_e( 'Add a link', 'pinterhvn-theme' ); ?>"
+							placeholder="<?php esc_attr_e( 'Đường dẫn để tải xuống tài nguyên này', 'pinterhvn-theme' ); ?>"
 							required
 						>
 					</div>
@@ -142,52 +175,50 @@ get_header();
 					<!-- Category -->
 					<div class="form-group">
 						<label for="asset_category" class="form-label">
-							<?php _e( 'Category', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Danh mục', 'pinterhvn-theme' ); ?>
 						</label>
-						<select id="asset_category" name="asset_category" class="form-select">
-							<option value=""><?php _e( 'Choose a board', 'pinterhvn-theme' ); ?></option>
+						<div class="category-checkbox-list">
 							<?php
 							$categories = get_terms( array(
 								'taxonomy'   => 'asset_category',
 								'hide_empty' => false,
 							) );
-							
+
 							if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
-								foreach ( $categories as $category ) {
-									echo '<option value="' . esc_attr( $category->term_id ) . '">' . 
-									     esc_html( $category->name ) . '</option>';
-								}
+								pinterhvn_display_category_checkboxes( $categories );
 							}
 							?>
-						</select>
+						</div>
 					</div>
 
 					<!-- Tags -->
 					<div class="form-group">
 						<label for="asset_tags" class="form-label">
-							<?php _e( 'Tagged topics (0)', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Chủ đề (0)', 'pinterhvn-theme' ); ?>
 						</label>
 						<input 
 							type="text" 
-							id="asset_tags" 
-							name="asset_tags" 
+							id="asset_tags_input" 
+							name="asset_tags_input" 
 							class="form-input tag-input" 
-							placeholder="<?php esc_attr_e( 'Search for a tag', 'pinterhvn-theme' ); ?>"
+							placeholder="<?php esc_attr_e( 'Tìm kiếm chủ đề liên quan', 'pinterhvn-theme' ); ?>"
 						>
 						<div class="tags-selected" id="tags-selected"></div>
+						<div class="tag-suggestions" id="tag-suggestions"></div>
+						<input type="hidden" id="asset_tags" name="asset_tags" value="">
 					</div>
 
 					<!-- Collections (Optional) -->
 					<div class="form-group">
 						<button type="button" class="btn-more-options" id="toggle-more-options">
-							<?php _e( 'More options', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Chức năng khác', 'pinterhvn-theme' ); ?>
 							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" class="chevron">
 								<path d="M4 6l4 4 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 							</svg>
 						</button>
 
 						<div class="more-options-content" id="more-options-content" style="display: none;">
-							<label class="form-label"><?php _e( 'Collections', 'pinterhvn-theme' ); ?></label>
+							<label class="form-label"><?php _e( 'Bộ sưu tập', 'pinterhvn-theme' ); ?></label>
 							<select id="asset_collections" name="asset_collections[]" class="form-select" multiple>
 								<?php
 								$collections = pinterhvn_get_user_collections( get_current_user_id() );
@@ -207,7 +238,7 @@ get_header();
 					<!-- Submit Button -->
 					<div class="form-actions">
 						<button type="submit" class="btn btn-publish" id="publish-asset-btn">
-							<?php _e( 'Publish', 'pinterhvn-theme' ); ?>
+							<?php _e( 'Đăng tài nguyên', 'pinterhvn-theme' ); ?>
 						</button>
 					</div>
 
@@ -259,7 +290,7 @@ get_header();
 }
 
 .upload-title {
-	font-size: 20px;
+	font-size: 32px;
 	font-weight: 700;
 	margin: 0;
 	color: #0f172a;
@@ -315,8 +346,8 @@ get_header();
 }
 
 .upload-icon {
-	width: 48px;
-	height: 48px;
+	width: 40px;
+	height: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -340,23 +371,6 @@ get_header();
 	line-height: 1.4;
 }
 
-.btn-choose-file {
-	background: #e2e8f0;
-	color: #0f172a;
-	padding: 12px 24px;
-	border: none;
-	border-radius: 24px;
-	font-weight: 600;
-	font-size: 15px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	margin-top: 8px;
-}
-
-.btn-choose-file:hover {
-	background: #cbd5e1;
-}
-
 /* Preview Area */
 .preview-area {
 	width: 100%;
@@ -373,7 +387,7 @@ get_header();
 	background: #000000;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: center; 
 	min-height: 400px;
 	position: relative;
 }
@@ -382,7 +396,7 @@ get_header();
 .preview-wrapper video {
 	max-width: 100%;
 	max-height: 600px;
-	object-fit: contain;
+	object-fit: contain; 
 	display: block;
 }
 
@@ -441,6 +455,7 @@ get_header();
 
 .form-group {
 	margin-bottom: 24px;
+	position: relative;
 }
 
 .form-label {
@@ -524,6 +539,50 @@ get_header();
 	font-size: 12px;
 	transition: background 0.2s ease;
 }
+
+/* Category Checkboxes */
+.category-checkbox-list {
+	max-height: 200px;
+	overflow-y: auto;
+	border: 2px solid #cbd5e1;
+	border-radius: 12px;
+	padding: 8px;
+}
+
+.category-checkbox-item {
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	cursor: pointer;
+	border-radius: 8px;
+	transition: background-color 0.2s ease;
+}
+
+.category-checkbox-item:hover {
+	background-color: #f1f5f9;
+}
+
+.category-checkbox-item input {
+	margin-right: 12px;
+	padding-left: calc(var(--level, 0) * 20px);
+}
+.tag-suggestions {
+	position: absolute;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-top: none;
+	border-radius: 0 0 12px 12px;
+	max-height: 200px;
+	overflow-y: auto;
+	z-index: 100;
+	width: 100%;
+}
+
+.suggestion-item {
+	padding: 10px 16px;
+	cursor: pointer;
+}
+.suggestion-item:hover { background: #f1f5f9; }
 
 .tag-remove:hover {
 	background: #94a3b8;
@@ -667,6 +726,7 @@ get_header();
 jQuery(document).ready(function($) {
 	var selectedFile = null;
 	var selectedTags = [];
+	var allTags = [];
 
 	// File input change
 	$('#asset_thumbnail').on('change', function(e) {
@@ -742,12 +802,12 @@ jQuery(document).ready(function($) {
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			if (file.type.startsWith('video/')) {
-				$('#preview-image').hide();
-				$('#preview-video').show();
+				$('#preview-image').css('display', 'none');
+				$('#preview-video').css('display', 'block');
 				$('#preview-video').attr('src', e.target.result);
 				// Ensure video plays
 				var videoElement = document.getElementById('preview-video');
-				videoElement.load();
+				videoElement.load(); // Make sure the new source is loaded
 				videoElement.play();
 			} else {
 				$('#preview-video').hide();
@@ -763,17 +823,63 @@ jQuery(document).ready(function($) {
 
 	// Tags handling
 	var tagTimeout;
-	$('#asset_tags').on('keyup', function(e) {
+	var tagInput = $('#asset_tags_input');
+	var suggestionsContainer = $('#tag-suggestions');
+
+	function fetchTags() {
+		if (allTags.length > 0) return; // Fetch only once
+		$.ajax({
+			url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+			type: 'GET',
+			data: { action: 'pinterhvn_get_all_tags' },
+			success: function(response) {
+				if (response.success) {
+					allTags = response.data;
+				}
+			}
+		});
+	}
+
+	tagInput.on('focus', fetchTags);
+
+	tagInput.on('keyup', function(e) {
+		var inputVal = $(this).val().trim().toLowerCase();
+		
 		if (e.key === 'Enter' || e.key === ',') {
 			e.preventDefault();
-			var tag = $(this).val().trim().replace(/,/g, '');
+			var tag = inputVal.replace(/,/g, '');
 			if (tag && !selectedTags.includes(tag)) {
 				selectedTags.push(tag);
 				addTagBadge(tag);
 				$(this).val('');
 				updateTagLabel();
+				suggestionsContainer.hide();
+			}
+			return;
+		}
+
+		suggestionsContainer.empty().hide();
+		if (inputVal.length > 0) {
+			var filteredTags = allTags.filter(function(tag) {
+				return tag.toLowerCase().includes(inputVal) && !selectedTags.includes(tag);
+			});
+
+			if (filteredTags.length > 0) {
+				filteredTags.forEach(function(tag) {
+					suggestionsContainer.append('<div class="suggestion-item" data-tag="' + tag + '">' + tag + '</div>');
+				});
+				suggestionsContainer.show();
 			}
 		}
+	});
+
+	$(document).on('click', '.suggestion-item', function() {
+		var tag = $(this).data('tag');
+		selectedTags.push(tag);
+		addTagBadge(tag);
+		tagInput.val('').focus();
+		suggestionsContainer.hide();
+		updateTagLabel();
 	});
 
 	function addTagBadge(tag) {
@@ -797,77 +903,62 @@ jQuery(document).ready(function($) {
 		updateTagLabel();
 	});
 
+	// Hide suggestions when clicking outside
+	$(document).on('click', function(e) {
+		if (!$(e.target).closest('.form-group').is(tagInput.parent())) {
+			suggestionsContainer.hide();
+		}
+	});
+
 	// More options toggle
 	$('#toggle-more-options').on('click', function() {
 		$(this).toggleClass('active');
 		$('#more-options-content').slideToggle();
 	});
 
-	// Form submission
-	$('#pinterhvn-upload-form').on('submit', function(e) {
-		e.preventDefault();
+	// Save from URL
+	$('#toggle-url-upload').on('click', function() {
+		var url = prompt("<?php esc_attr_e( 'Enter image or video URL', 'pinterhvn-theme' ); ?>");
+		if (url) {
+			var $button = $(this);
+			var originalText = $button.text();
+			$button.prop('disabled', true).text('<?php esc_attr_e( 'Saving...', 'pinterhvn-theme' ); ?>');
 
-		if (!selectedFile) {
-			alert('<?php _e( 'Please select a file', 'pinterhvn-theme' ); ?>');
-			return;
-		}
-
-		var formData = new FormData(this);
-		formData.append('action', 'pinterhvn_upload_asset');
-		formData.append('asset_tags', selectedTags.join(','));
-
-		// Disable button
-		$('#publish-asset-btn').prop('disabled', true).text('<?php _e( 'Publishing...', 'pinterhvn-theme' ); ?>');
-		$('.upload-page').addClass('uploading');
-
-		$.ajax({
-			url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-			type: 'POST',
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(response) {
-				if (response.success) {
-					$('#upload-message')
-						.removeClass('error')
-						.addClass('success')
-						.html('<strong><?php _e( 'Success!', 'pinterhvn-theme' ); ?></strong> ' + response.data.message)
-						.slideDown();
-
-					// Redirect after 2 seconds
-					setTimeout(function() {
-						if (response.data.view_url) {
-							window.location.href = response.data.view_url;
-						} else {
-							window.location.href = '<?php echo home_url( '/' ); ?>';
-						}
-					}, 2000);
-				} else {
-					$('#upload-message')
-						.removeClass('success')
-						.addClass('error')
-						.html('<strong><?php _e( 'Error!', 'pinterhvn-theme' ); ?></strong> ' + response.data.message)
-						.slideDown();
-					
-					$('#publish-asset-btn').prop('disabled', false).text('<?php _e( 'Publish', 'pinterhvn-theme' ); ?>');
-					$('.upload-page').removeClass('uploading');
+			$.ajax({
+				url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+				type: 'POST',
+				data: {
+					action: 'pinterhvn_sideload_from_url',
+					nonce: '<?php echo wp_create_nonce( "pinterhvn_sideload_nonce" ); ?>',
+					file_url: url
+				},
+				success: function(response) {
+					if (response.success) {
+						// Create a File object from the downloaded blob
+						fetch(response.data.url)
+							.then(res => res.blob())
+							.then(blob => {
+								const file = new File([blob], response.data.filename, { type: response.data.type });
+								handleFileSelect(file);
+							});
+					} else {
+						alert('<?php esc_attr_e( 'Error:', 'pinterhvn-theme' ); ?> ' + response.data);
+					}
+				},
+				error: function() {
+					alert('<?php esc_attr_e( 'An error occurred while trying to save from the URL.', 'pinterhvn-theme' ); ?>');
+				},
+				complete: function() {
+					$button.prop('disabled', false).text(originalText);
 				}
-			},
-			error: function(xhr, status, error) {
-				$('#upload-message')
-					.removeClass('success')
-					.addClass('error')
-					.html('<strong><?php _e( 'Error!', 'pinterhvn-theme' ); ?></strong> <?php _e( 'Upload failed. Please try again.', 'pinterhvn-theme' ); ?>')
-					.slideDown();
-				
-				$('#publish-asset-btn').prop('disabled', false).text('<?php _e( 'Publish', 'pinterhvn-theme' ); ?>');
-				$('.upload-page').removeClass('uploading');
-			}
-		});
+			});
+		}
 	});
 
-	// Disable publish initially
-	$('#publish-asset-btn').prop('disabled', true);
+	// When submitting the form, join tags into the hidden input
+    $('#pinterhvn-upload-form').on('submit', function() {
+        $('#asset_tags').val(selectedTags.join(','));
+    });
 });
 </script>
 

@@ -230,6 +230,19 @@
 							</svg>
 							<div class="item-content">
 								<div class="item-title"><?php _e( 'Thông tin cá nhân', 'pinterhvn-theme' ); ?></div>
+								<div class="item-desc"><?php _e( 'Chỉnh sửa thông tin cá nhân', 'pinterhvn-theme' ); ?></div>
+							</div>
+						</a>
+
+						<!-- Collection Profile -->
+						<a href="<?php echo esc_url( home_url( '/my-collections/' ) ); ?>" class="mega-menu-item">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+								<path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+								<polyline points="17 21 17 13 7 13 7 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+								<polyline points="7 3 7 8 15 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+							</svg>
+							<div class="item-content">
+								<div class="item-title"><?php _e( 'Bộ sưu tập', 'pinterhvn-theme' ); ?></div>
 								<div class="item-desc"><?php _e( 'Xem assets đã lưu & collections', 'pinterhvn-theme' ); ?></div>
 							</div>
 						</a>
@@ -265,7 +278,7 @@
 			</div>
 			<?php else : ?>
 			<!-- Login Button -->
-			<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="btn btn-login">
+			<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="btn btn-primary">
 				<?php _e( 'Đăng nhập', 'pinterhvn-theme' ); ?>
 			</a>
 			<?php endif; ?>

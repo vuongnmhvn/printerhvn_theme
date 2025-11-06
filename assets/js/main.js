@@ -24,6 +24,7 @@
             this.initMasonry();
             this.initInfiniteScroll();
             this.initScrollToTop();
+            this.initPageShowRelayout();
         },
 
         initMasonry: function() {
@@ -36,7 +37,7 @@
                     itemSelector: '.grid-item',
                     columnWidth: '.grid-sizer',
                     percentPosition: true,
-                    gutter: 20,
+                    gutter: 16,
                     transitionDuration: '0.3s',
                     initLayout: true
                 });
@@ -124,6 +125,23 @@
             $scrollBtn.on('click', function() {
                 $('html, body').animate({ scrollTop: 0 }, 600);
             });
+        },
+
+        /**
+         * Handles layout recalculation when a page is shown from the back-forward cache (bfcache).
+         * This prevents items from overlapping when using the browser's back/forward buttons.
+         */
+        initPageShowRelayout: function() {
+            var self = this;
+            window.addEventListener('pageshow', function(event) {
+                // The persisted property is true if the page is from the bfcache.
+                if (event.persisted && self.$grid && self.$grid.data('masonry')) {
+                    // Use a small timeout to ensure the browser has finished rendering the cached page
+                    setTimeout(function() {
+                        self.$grid.masonry('layout');
+                    }, 10);
+                }
+            });
         }
     };
 
@@ -133,4 +151,25 @@
 
     window.PinterHVN = PinterHVN;
 
+	// Add hover effect for video previews on asset cards
+	// Video will play muted on mouseenter and pause/reset on mouseleave
+	$(document).on('mouseenter', '.asset-card', function() {
+		var video = $(this).find('video.asset-video').get(0);
+		if (video) {
+			// The play() method returns a Promise. We can catch errors if autoplay is blocked.
+			var playPromise = video.play();
+			if (playPromise !== undefined) {
+				playPromise.catch(error => {
+					// Autoplay was prevented. This is common in some browsers.
+				});
+			}
+		}
+	}).on('mouseleave', '.asset-card', function() {
+		var video = $(this).find('video.asset-video').get(0);
+		if (video) {
+			video.pause();
+			video.currentTime = 0; // Reset video to the beginning
+		}
+	});
+    
 })(jQuery);

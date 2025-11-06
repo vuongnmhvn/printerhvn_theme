@@ -320,6 +320,7 @@ get_header();
 
 .btn-primary:hover {
 	background: #ad081b;
+	color: #ffffff;
 }
 
 .btn-secondary {

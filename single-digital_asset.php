@@ -34,6 +34,7 @@ get_header();
 		
 		// Get taxonomies
 		$categories = get_the_terms( $asset_id, 'asset_category' );
+		$tags       = get_the_terms( $asset_id, 'asset_tag' );
 		?>
 
 		<div class="single-pin-container">
@@ -54,7 +55,16 @@ get_header();
 				<div class="pin-media-section">
 					<div class="pin-media-container">
 						<?php
-						if ( has_post_thumbnail() ) {
+						$preview_video_id = get_post_meta( $asset_id, '_pinterhvn_preview_video_id', true );
+						if ( $preview_video_id ) {
+							$preview_video_url = wp_get_attachment_url( $preview_video_id );
+							?>
+							<video class="pin-video" controls autoplay loop muted playsinline>
+								<source src="<?php echo esc_url( $preview_video_url ); ?>" type="video/mp4">
+							</video>
+							<?php
+						}
+						elseif ( has_post_thumbnail() ) {
 							$thumbnail_id = get_post_thumbnail_id();
 							$mime_type = get_post_mime_type( $thumbnail_id );
 							$attachment_url = wp_get_attachment_url( $thumbnail_id );
@@ -157,39 +167,6 @@ get_header();
 						<!-- Title -->
 						<h1 class="pin-title"><?php the_title(); ?></h1>
 
-						<!-- Asset Stats -->
-						<?php if ( $view_count || $save_count || $download_count ) : ?>
-							<div class="asset-card-stats" style="margin-bottom: 16px; margin-top: 8px;">
-								<?php if ( $view_count ) : ?>
-									<div class="asset-card-stat" title="<?php esc_attr_e( 'Views', 'pinterhvn-theme' ); ?>">
-										<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-											<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-											<path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-										</svg>
-										<span><?php echo number_format_i18n( $view_count ); ?></span>
-									</div>
-								<?php endif; ?>
-
-								<?php if ( $save_count ) : ?>
-									<div class="asset-card-stat" title="<?php esc_attr_e( 'Saves', 'pinterhvn-theme' ); ?>">
-										<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-											<path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
-										</svg>
-										<span><?php echo number_format_i18n( $save_count ); ?></span>
-									</div>
-								<?php endif; ?>
-
-								<?php if ( $download_count ) : ?>
-									<div class="asset-card-stat" title="<?php esc_attr_e( 'Downloads', 'pinterhvn-theme' ); ?>">
-										<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-											<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-										</svg>
-										<span><?php echo number_format_i18n( $download_count ); ?></span>
-									</div>
-								<?php endif; ?>
-							</div>
-						<?php endif; ?>
-
 						<!-- Description -->
 						<?php if ( get_the_content() ) : ?>
 							<div class="pin-description">
@@ -203,7 +180,38 @@ get_header();
 								<?php echo get_avatar( get_the_author_meta( 'ID' ), 48 ); ?>
 								<div class="author-info">
 									<div class="author-name"><?php the_author(); ?></div>
-									<div class="author-meta"><?php echo number_format_i18n( $view_count ); ?> <?php _e( 'views', 'pinterhvn-theme' ); ?></div>
+									<!-- Asset Stats -->
+								<?php if ( $view_count || $save_count || $download_count ) : ?>
+									<div class="asset-card-stats">
+										<?php if ( $view_count ) : ?>
+											<div class="asset-card-stat" title="<?php esc_attr_e( 'Views', 'pinterhvn-theme' ); ?>">
+												<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+													<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+													<path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+												</svg>
+												<span><?php echo number_format_i18n( $view_count ); ?> <?php _e( 'đã xem', 'pinterhvn-theme' ); ?></span>
+											</div>
+										<?php endif; ?>
+
+										<?php if ( $save_count ) : ?>
+											<div class="asset-card-stat" title="<?php esc_attr_e( 'Saves', 'pinterhvn-theme' ); ?>">
+												<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+													<path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
+												</svg>
+												<span><?php echo number_format_i18n( $save_count ); ?> <?php _e( 'đã lưu', 'pinterhvn-theme' ); ?></span>
+											</div>
+										<?php endif; ?>
+
+										<?php if ( $download_count ) : ?>
+											<div class="asset-card-stat" title="<?php esc_attr_e( 'Downloads', 'pinterhvn-theme' ); ?>">
+												<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+													<path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+												</svg>
+												<span><?php echo number_format_i18n( $download_count ); ?> <?php _e( 'đã tải', 'pinterhvn-theme' ); ?></span>
+											</div>
+										<?php endif; ?>
+									</div>
+								<?php endif; ?>
 								</div>
 							</a>
 						</div>
@@ -214,6 +222,17 @@ get_header();
 								<?php foreach ( $categories as $category ) : ?>
 									<a href="<?php echo esc_url( get_term_link( $category ) ); ?>" class="category-chip">
 										<?php echo esc_html( $category->name ); ?>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+
+						<!-- Tags -->
+						<?php if ( $tags && ! is_wp_error( $tags ) ) : ?>
+							<div class="pin-tags">
+								<?php foreach ( $tags as $tag ) : ?>
+									<a href="<?php echo esc_url( get_term_link( $tag ) ); ?>" class="tag-chip">
+										#<?php echo esc_html( $tag->name ); ?>
 									</a>
 								<?php endforeach; ?>
 							</div>
@@ -234,7 +253,7 @@ get_header();
 			?>
 			<div class="more-like-this-section">
 				<div class="container-fluid">
-					<h2 class="section-heading"><?php _e( 'More like this', 'pinterhvn-theme' ); ?></h2>
+					<h2 class="section-heading"><?php _e( 'Tài nguyên khác', 'pinterhvn-theme' ); ?></h2>
 					
 					<div class="pinterhvn-grid related-assets-grid">
 						<div class="grid-sizer"></div>
@@ -555,6 +574,29 @@ get_header();
 	color: #ffffff;
 }
 
+/* Tags */
+.pin-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 24px;
+}
+
+.tag-chip {
+	background: #eef2ff;
+	color: #ca3838ff;
+	padding: 6px 12px;
+	border-radius: 16px;
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+
+.tag-chip:hover {
+	background: #ca3838ff;
+	color: #ffffff;
+}
 /* Removed Comments Section - Not needed */
 
 /* More Like This Section */

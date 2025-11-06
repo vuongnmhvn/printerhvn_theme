@@ -131,7 +131,7 @@ p {
 #primary {
     width: 100%;
     max-width: 100%;
-    padding: 120px 0px;
+    padding: 120px 0px 0px 0px;
 }
 
 .site-content {
@@ -168,7 +168,6 @@ p {
 .archive-description {
     color: #64748b;
     font-size: 1.125rem;
-    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -364,7 +363,7 @@ p {
     right: 0;
     height: 64px;
     background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
+    /* border-bottom: 1px solid #e2e8f0; */
     z-index: 999;
     display: flex;
     align-items: center;
@@ -377,17 +376,17 @@ p {
     display: flex;
     align-items: center;
     gap: 16px;
+    justify-content: space-between;
 }
 
 .search-form-horizontal {
     display: flex;
     align-items: center;
     gap: 12px;
-    /* background: #f1f5f9; */
+    background: #f1f5f9;
     border-radius: 24px;
-    padding: 12px 20px;
+    padding: 0px 15px;
     flex: 1;
-    max-width: 800px;
 }
 
 .search-form-horizontal .search-icon {
@@ -397,11 +396,15 @@ p {
 
 .search-form-horizontal .search-input {
     flex: 1;
-    /* border: none; */
+    border: none;
     background: transparent;
     font-size: 16px;
     outline: none;
     color: #1e293b;
+}
+
+.search-form-horizontal .search-input:focus {
+    box-shadow: none;
 }
 
 .search-form-horizontal .search-input::placeholder {
@@ -603,44 +606,55 @@ p {
 /*--------------------------------------------------------------
 6.0 Masonry Grid
 --------------------------------------------------------------*/
-.pinterhvn-grid {
-    width: 100%;
-    margin: 0 auto;
-}
-
-.pinterhvn-grid:after {
-    content: '';
-    display: block;
-    clear: both;
-}
-
-/* Grid Sizer */
-.grid-sizer,
-.grid-item {
-    width: calc(17% - 10px);
-    margin: 5px;
-}
-
-@media (max-width: 1200px) {
-    .grid-sizer,
-    .grid-item {
-        width: calc(33.333% - 10px);
-    }
-}
-
-@media (max-width: 768px) {
-    .grid-sizer,
-    .grid-item {
-        width: calc(50% - 10px);
-    }
-}
-
-@media (max-width: 480px) {
-    .grid-sizer,
-    .grid-item {
-        width: calc(50% - 10px);
-    }
-}
+ .pinterhvn-grid {
+     margin: 0 auto; /* Căn giữa grid */
+ }
+ 
+ /* Xóa padding mặc định của container nếu cần */
+ .container-fluid {
+     padding-left: 8px;
+     padding-right: 8px;
+ }
+ 
+ /* Grid Sizer & Grid Item */
+ /* Đây là phần quan trọng nhất để grid tự tính toán chiều rộng */
+ 
+ .pinterhvn-grid .grid-sizer,
+ .pinterhvn-grid .grid-item {
+     margin-bottom: 16px; /* Khoảng cách dọc giữa các item */
+ }
+ 
+ /* --- Responsive Columns --- */
+ 
+ /* Màn hình điện thoại (2 cột) */
+ .pinterhvn-grid .grid-sizer,
+ .pinterhvn-grid .grid-item {
+     width: calc(50% - 8px); /* 2 cột, trừ đi một nửa khoảng cách gutter */
+ }
+ 
+ /* Màn hình máy tính bảng (3 cột) */
+ @media (min-width: 768px) {
+     .pinterhvn-grid .grid-sizer,
+     .pinterhvn-grid .grid-item {
+         width: calc(33.333% - 11px); /* 3 cột */
+     }
+ }
+ 
+ /* Màn hình máy tính lớn (4 cột) */
+ @media (min-width: 992px) {
+     .pinterhvn-grid .grid-sizer,
+     .pinterhvn-grid .grid-item {
+         width: calc(25% - 12px); /* 4 cột */
+     }
+ }
+ 
+ /* Màn hình rất lớn (5 cột) */
+ @media (min-width: 1200px) {
+     .pinterhvn-grid .grid-sizer,
+     .pinterhvn-grid .grid-item {
+         width: calc(20% - 12.8px); /* 5 cột, 16 * 4 / 5 = 12.8 */
+     }
+ }
 
 /*--------------------------------------------------------------
 7.0 Asset Cards
@@ -652,8 +666,8 @@ p {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     cursor: pointer;
-    break-inside: avoid;
-    margin-bottom: 20px;
+    break-inside: avoid; /* Ngăn item bị ngắt giữa các cột */
+    /* margin-bottom đã được xử lý ở trên */
 }
 
 .asset-card:hover {
@@ -995,6 +1009,7 @@ p {
 
 .btn-primary:hover {
 	background: #ad081b;
+    color: #fff;
 }
 
 .btn-secondary {

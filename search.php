@@ -16,7 +16,7 @@ get_header();
 			<h1 class="page-title">
 				<?php
 				printf(
-					esc_html__( 'Search Results for: %s', 'pinterhvn-theme' ),
+					esc_html__( 'Kết quả tìm kiếm cho: %s', 'pinterhvn-theme' ),
 					'<span>' . get_search_query() . '</span>'
 				);
 				?>
@@ -75,11 +75,11 @@ get_header();
 				</svg>
 
 				<h2 style="font-size: 2rem; margin-bottom: 1rem;">
-					<?php esc_html_e( 'Nothing Found', 'pinterhvn-theme' ); ?>
+					<?php esc_html_e( 'Không có kết quả', 'pinterhvn-theme' ); ?>
 				</h2>
 
 				<p style="color: #64748b; margin-bottom: 2rem;">
-					<?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with different keywords.', 'pinterhvn-theme' ); ?>
+					<?php esc_html_e( 'Rất tiếc, không có kết quả nào khớp với từ khóa tìm kiếm của bạn. Vui lòng thử lại với từ khóa khác.', 'pinterhvn-theme' ); ?>
 				</p>
 
 				<div style="max-width: 500px; margin: 0 auto 2rem;">
@@ -88,19 +88,18 @@ get_header();
 
 				<div class="search-suggestions" style="text-align: left; max-width: 600px; margin: 0 auto;">
 					<h3 style="font-size: 1.25rem; margin-bottom: 1rem;">
-						<?php esc_html_e( 'Search Suggestions:', 'pinterhvn-theme' ); ?>
+						<?php esc_html_e( 'Gợi ý tìm kiếm:', 'pinterhvn-theme' ); ?>
 					</h3>
 					<ul style="list-style: disc; margin-left: 1.5rem; color: #64748b;">
-						<li><?php esc_html_e( 'Check your spelling', 'pinterhvn-theme' ); ?></li>
-						<li><?php esc_html_e( 'Try more general keywords', 'pinterhvn-theme' ); ?></li>
-						<li><?php esc_html_e( 'Try different keywords', 'pinterhvn-theme' ); ?></li>
-						<li><?php esc_html_e( 'Browse all assets instead', 'pinterhvn-theme' ); ?></li>
+						<li><?php esc_html_e( 'Kiểm tra lại chính tả', 'pinterhvn-theme' ); ?></li>
+						<li><?php esc_html_e( 'Thử một từ khoá khác', 'pinterhvn-theme' ); ?></li>
+						<li><?php esc_html_e( 'Duyệt tìm tất cả tài nguyên', 'pinterhvn-theme' ); ?></li>
 					</ul>
 				</div>
 
 				<div class="mt-4">
 					<a href="<?php echo esc_url( get_post_type_archive_link( 'digital_asset' ) ); ?>" class="btn btn-primary">
-						<?php esc_html_e( 'Browse All Assets', 'pinterhvn-theme' ); ?>
+						<?php esc_html_e( 'Xem tất cả tài nguyên', 'pinterhvn-theme' ); ?>
 					</a>
 				</div>
 			</div>
