@@ -85,10 +85,10 @@ get_header();
 								<path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="1"/>
 								<polyline points="17 21 17 13 7 13 7 21" stroke-width="1"/>
 							</svg>
-							<h2><?php _e( 'No saved assets yet', 'pinterhvn-theme' ); ?></h2>
-							<p><?php _e( 'Start exploring and save assets you love!', 'pinterhvn-theme' ); ?></p>
+							<h2><?php _e( 'Chưa có tài nguyên nào được lưu', 'pinterhvn-theme' ); ?></h2>
+							<p><?php _e( 'Bắt đầu khám phá và lưu những tài sản bạn yêu thích!', 'pinterhvn-theme' ); ?></p>
 							<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn-primary">
-								<?php _e( 'Explore Assets', 'pinterhvn-theme' ); ?>
+								<?php _e( 'Khám phá', 'pinterhvn-theme' ); ?>
 							</a>
 						</div>
 						<?php
@@ -151,8 +151,8 @@ get_header();
 								<rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1"/>
 								<path d="M3 9h18M9 21V9" stroke-width="1"/>
 							</svg>
-							<h2><?php _e( 'No collections yet', 'pinterhvn-theme' ); ?></h2>
-							<p><?php _e( 'Create collections to organize your saved assets', 'pinterhvn-theme' ); ?></p>
+							<h2><?php _e( 'Chưa có bộ sưu tập nào', 'pinterhvn-theme' ); ?></h2>
+							<p><?php _e( 'Tạo bộ sưu tập để sắp xếp các tài sản đã lưu của bạn', 'pinterhvn-theme' ); ?></p>
 						</div>
 						<?php
 					else :

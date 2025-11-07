@@ -57,9 +57,23 @@
         initInfiniteScroll: function() {
             var self = this;
 
-            $('#load-more-assets').on('click', function(e) {
-                e.preventDefault();
-                self.loadMoreAssets();
+            // Hide the button as we are using scroll to load
+            $('#load-more-assets').hide();
+
+            $(window).on('scroll', function() {
+                if (self.isLoading || !self.hasMore) {
+                    return;
+                }
+
+                var $loadMoreWrapper = $('.load-more-wrapper');
+                if ($loadMoreWrapper.length === 0 || !$loadMoreWrapper.is(':visible')) {
+                    return;
+                }
+
+                // Trigger load when user is 500px away from the bottom of the wrapper
+                if ($(window).scrollTop() + $(window).height() > $loadMoreWrapper.offset().top - 500) {
+                    self.loadMoreAssets();
+                }
             });
         },
 
@@ -68,7 +82,6 @@
             if (this.isLoading || !this.hasMore) return;
 
             this.isLoading = true;
-            $('#load-more-assets').prop('disabled', true).addClass('loading');
             $('.load-more-wrapper .spinner').show();
 
             var data = {
@@ -112,7 +125,6 @@
                 },
                 complete: function() {
                     self.isLoading = false;
-                    $('#load-more-assets').prop('disabled', false).removeClass('loading');
                     $('.load-more-wrapper .spinner').hide();
                 }
             });

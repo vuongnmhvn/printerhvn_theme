@@ -59,7 +59,12 @@ get_header();
 				?>
 			</div>
 
-			<?php pinterhvn_pagination(); ?>
+			<?php
+			// Hidden pagination for infinite scroll
+			echo '<div style="display: none;">';
+			pinterhvn_pagination();
+			echo '</div>';
+			?>
 
 		<?php else : ?>
 

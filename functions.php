@@ -307,9 +307,9 @@ function pinterhvn_search_fields( $fields, $query ) {
 
 function pinterhvn_search_join( $join, $query ) {
     global $wpdb;
-    $join .= " LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id ";
-    $join .= " LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'asset_tag' ";
-    $join .= " LEFT JOIN {$wpdb->terms} terms ON tt.term_id = terms.term_id ";
+    $join .= " LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id";
+    $join .= " LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+    $join .= " LEFT JOIN {$wpdb->terms} terms ON tt.term_id = terms.term_id";
     return $join;
 }
 
@@ -323,8 +323,9 @@ function pinterhvn_search_where( $where, $query ) {
     $where = $wpdb->prepare( " AND (
         ({$wpdb->posts}.post_title LIKE %s COLLATE utf8mb4_unicode_ci) OR
         ({$wpdb->posts}.post_content LIKE %s COLLATE utf8mb4_unicode_ci) OR
-        (terms.name LIKE %s COLLATE utf8mb4_unicode_ci)
-    )", $like, $like, $like );
+        (tt.taxonomy IN ('asset_tag', 'asset_category', 'campaign') AND terms.name LIKE %s COLLATE utf8mb4_unicode_ci) OR
+        (tt.taxonomy IN ('campaign') AND tt.description LIKE %s COLLATE utf8mb4_unicode_ci)
+    )", $like, $like, $like, $like );
 
     return $where;
 }

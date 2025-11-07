@@ -85,7 +85,12 @@ get_header();
 				?>
 			</div>
 
-			<?php pinterhvn_pagination(); ?>
+			<?php
+			// Hidden pagination for infinite scroll
+			echo '<div style="display: none;">';
+			pinterhvn_pagination();
+			echo '</div>';
+			?>
 
 			<div class="load-more-wrapper text-center mt-4">
 				<button class="btn btn-primary" id="load-more-assets">
