@@ -157,7 +157,7 @@ get_header();
 						<div class="action-icons-right">
 							<?php if ( is_user_logged_in() ) : ?>
 								<button class="btn btn-save save-btn" data-asset-id="<?php echo esc_attr( $asset_id ); ?>">
-									<?php _e( 'Save', 'pinterhvn-theme' ); ?>
+									<?php _e( 'Lưu lại', 'pinterhvn-theme' ); ?>
 								</button>
 							<?php endif; ?>
 						</div>
