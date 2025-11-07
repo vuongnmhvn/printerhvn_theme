@@ -35,6 +35,7 @@ get_header();
 		// Get taxonomies
 		$categories = get_the_terms( $asset_id, 'asset_category' );
 		$tags       = get_the_terms( $asset_id, 'asset_tag' );
+		$campaigns  = get_the_terms( $asset_id, 'campaign' );
 		?>
 
 		<div class="single-pin-container">
@@ -239,6 +240,18 @@ get_header();
 							</div>
 						<?php endif; ?>
 
+						<!-- Campaigns -->
+						<?php if ( $campaigns && ! is_wp_error( $campaigns ) ) : ?>
+							<div class="pin-campaigns">
+								<h3 class="pin-section-title"><?php _e( 'Thuộc chiến dịch', 'pinterhvn-theme' ); ?></h3>
+								<?php foreach ( $campaigns as $campaign ) : ?>
+									<a href="<?php echo esc_url( get_term_link( $campaign ) ); ?>" class="campaign-chip">
+										<?php echo esc_html( $campaign->name ); ?>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+
 					</div>
 
 				</div>
@@ -331,7 +344,7 @@ get_header();
 /* Media Section */
 .pin-media-section {
 	position: relative;
-	background: #000000;
+	background: #ffe6e6;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -596,6 +609,37 @@ get_header();
 
 .tag-chip:hover {
 	background: #ca3838ff;
+	color: #ffffff;
+}
+
+/* Campaigns */
+.pin-campaigns {
+	margin-bottom: 24px;
+}
+
+.pin-section-title {
+	font-size: 16px;
+	font-weight: 700;
+	color: #0f172a;
+	margin-bottom: 12px;
+}
+
+.campaign-chip {
+	display: inline-block;
+	background: #fee2e2;
+	color: #991b1b;
+	padding: 8px 16px;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	margin-right: 8px;
+	margin-bottom: 8px;
+}
+
+.campaign-chip:hover {
+	background: #ef4444;
 	color: #ffffff;
 }
 /* Removed Comments Section - Not needed */

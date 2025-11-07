@@ -821,6 +821,11 @@ p {
     overflow: hidden;
 }
 
+.author-avatar img{
+    margin: 0 auto;
+    border-radius: 99px;
+}
+
 .asset-card-stats {
     display: flex;
     gap: 1rem;
