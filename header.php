@@ -235,6 +235,30 @@
 							<div class="user-details">
 								<div class="user-name"><?php echo wp_get_current_user()->display_name; ?></div>
 								<div class="user-email"><?php echo wp_get_current_user()->user_email; ?></div>
+								<div class="user-role">
+								<?php
+								if ( is_user_logged_in() ) {
+									$current_user = wp_get_current_user();
+									$user_roles = (array) $current_user->roles; // Get the user's role slugs as an array
+
+									if ( ! empty( $user_roles ) ) {
+										$first_role_slug = array_shift( $user_roles ); // Get the first role slug (most common scenario)
+
+										global $wp_roles;
+										if ( isset( $wp_roles->role_names[ $first_role_slug ] ) ) {
+											$role_title = $wp_roles->role_names[ $first_role_slug ];
+											echo $role_title;
+										} else {
+											echo "Role title not found for slug: " . $first_role_slug;
+										}
+									} else {
+										echo "Không rõ";
+									}
+								} else {
+									echo "Chưa đăng nhập";
+								}
+								?>
+								</div>
 							</div>
 						</div>
 					</div>

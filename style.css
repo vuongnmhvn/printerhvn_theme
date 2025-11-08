@@ -515,6 +515,15 @@ p {
     text-overflow: ellipsis;
 }
 
+.user-role{
+    padding: 3px 10px;
+    background-color: #e13030;
+    display: inline-block;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
 .mega-menu-body {
     padding: 8px;
 }
